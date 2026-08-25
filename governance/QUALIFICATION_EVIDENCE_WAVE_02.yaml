@@ -1,216 +1,165 @@
-version: 1.4
+version: 2.0
 updated: 2026-08-25
 scope: convergence_wave_02
-status: EVIDENCE_PARTIAL_NOT_PRODUCTION_QUALIFIED
+status: EVIDENCE_ADVANCED_NOT_PRODUCTION_QUALIFIED
+
+review_authority:
+  sovereign_control_plane: PEA_MƐTAPEFYON_OMEGA
+  agent_manager:
+    status: IMPLEMENTED
+    gate: governance/AGENT_MANAGER_REVIEW_GATE.md
+    skill: skills/agent-manager/SKILL.md
+    role: lifecycle_admission_tool_review_output_review_quarantine_change_retirement
+    authority: subordinate_to_human_PEA_METAPEFYON_and_council_governance
+    lifecycle: [REFERENCE_ONLY, EXPERIMENTAL, SANDBOX_QUALIFIED, CONTROLLED_PILOT, PRODUCTION_QUALIFIED, QUARANTINED, DEPRECATED, RETIRED]
+    rule: discovery_is_not_installation_installation_is_not_activation_activation_is_not_qualification_qualification_is_not_authorization
 
 components:
-  - component: yemanlin1st/openclaw
-    migration_pr: 1
-    production_candidate_head: b9d522738d5e087c1783e38eb1401eebcabc40de
-    qualification_pr: 2
-    qualification_harness:
-      immutable_base_branch: qualification/upstream-base-2026-08-25
-      base_sha: b9d522738d5e087c1783e38eb1401eebcabc40de
-      head_branch: qualification/full-ci-2026-08-25
-      head_sha: 2e4e134ede6bfd606247c8e34e9cd7aeaa1545fc
-      delta: one_qualification_only_text_file
-      draft: false
-      merge_policy: NEVER_MERGE
-      observed_pull_request_workflow_runs: 0
-      repository_actions_query_total_count: 0
-    conclusion: qualification_harness_correctly_constructed_but_GitHub_Actions_not_executing_on_fork
-    blockers:
-      - no_Actions_execution_on_yemanlin1st_openclaw_fork
-      - state_and_agent_schema_migration_not_tested
-      - runtime_plugin_provider_memory_and_session_migration_not_tested
-      - no_security_or_performance_evidence
-
   - component: PEFY-TECH/NemoClaw
     migration_pr: 1
-    production_candidate_head: fa4eea8cfc89096fe562c3624cb7ec38496ecfda
-    workflow_evidence:
-      migration_pr_metadata_gates:
-        pr_title_lint:
-          initial: failure
-          remediation: title_changed_to_chore_qualify_NemoClaw_upstream_migration
-          rerun: success
-        dco_declaration:
-          status: failure
-          reason: PR_body_requires_explicit_Signed-off-by_declaration
-          treatment: requires_authorized_human_attestation_do_not_fabricate
-        aggregate_ci:
-          conclusion: success
-          evidence_quality: insufficient
-          reason: CI_REQUIRED_false_for_metadata_only_edit
-          substantive_jobs: skipped
-      initial_full_ci_harness_pr_2:
-        state: CLOSED_SUPERSEDED
-        base: 1e23347c0d74368f040fefd6eab1f4f45dbdc2b3
-        head: 70e708c734cf64f0b25f19c9c380e5d82ae7ebc3
-        root_cause: >-
-          Current upstream workflows load trusted reusable CI actions from
-          github.event.pull_request.base.sha. Historical PEFY main did not contain
-          the current actions, so jobs failed before substantive upstream tests.
-        conclusion: invalid_as_runtime_compatibility_result_but_valid_as_CI_base_mismatch_evidence
-      exact_upstream_full_ci_harness_pr_3:
-        state: RUNNING_ONLY_SHARD_9_REMAINED_AT_LAST_CAPTURE
-        immutable_base_branch: qualification/upstream-base-2026-08-25
-        base_sha: fa4eea8cfc89096fe562c3624cb7ec38496ecfda
-        head_branch: qualification/full-ci-2026-08-25
-        head_sha: 70e708c734cf64f0b25f19c9c380e5d82ae7ebc3
-        delta: one_qualification_only_text_file
-        merge_policy: NEVER_MERGE
-        confirmed_results:
-          changed_path_detection: success
-          PR_title_lint: success
-          dco_declaration: failure_human_attestation_required
-          wechat_runtime_audit: success
-          reviewed_production_npm_audit:
-            conclusion: success
-            threshold: high
-            reviewed_graph_high_or_above_findings: 0
-            exceptions: 0
-          build_typecheck: success
-          installer_integration:
-            conclusion: success
-            test_files_passed: 22
-            tests_passed: 606
-            tests_skipped: 1
-          plugin_functional_tests:
-            test_files_passed: 33
-            tests_passed: 909
-            statements_coverage_percent: 95.53
-            branches_coverage_percent: 90.22
-            functions_coverage_percent: 99.45
-            lines_coverage_percent: 96.21
-            functional_conclusion: success
-            job_conclusion: failure
-            job_failure_class: platform_configuration
-            job_failure_reason: GitHub_Code_Quality_not_enabled_HTTP_403_during_coverage_upload
-            product_failure: false
-          static_checks:
-            job_conclusion: failure
-            passed_controls:
-              - createRequire_allowlist_ratchet
-              - hadolint_binary_checksum
-              - sandbox_lockfile_validation
-              - reviewed_MCP_runtime_bundle
-              - config_schema_validation_55_of_55
-              - scorecard_typecheck
-              - SPDX_headers
-              - oxlint_type_aware
-              - managed_inference_catalog
-              - repository_checks
-              - env_var_documentation_gate
-              - shellcheck
-              - hadolint
-              - gitleaks_secret_scan
-              - markdownlint
-              - e2e_semantic_phase_plans
-            failing_control: codebase_growth_guardrails
-            failure_class: qualification_harness_comparison_base_artifact
-            root_cause: >-
-              Growth guardrail defaults to origin/main unless NEMOCLAW_GROWTH_PR=1.
-              In the PEFY fork origin/main is the historical March baseline, so it
-              treats the complete NVIDIA migration as the qualification PR delta.
-            product_failure: false
-          security_code_scanning:
-            shellcheck_SARIF: success
-            codeql_python: success
-            codeql_javascript_typescript: success
-          cli_coverage_shards:
-            passed: [1, 2, 4, 5, 6, 7, 8, 11]
-            running_at_last_capture: [9]
-            failed:
-              shard_3:
-                classification: UNRESOLVED_TIMEOUT
-                finding: one_5000ms_timeout_in_setup_nim_flow_serving_profile_test
-                test_character: mock_driven_no_direct_live_service_dependency
-                required_action: rerun_individual_job_after_parent_run_completes
-              shard_10:
-                classification: FORK_PROVENANCE_PORTABILITY_BLOCKER
-                findings:
-                  - canonical_test_fixture_binds_candidateRepository_to_NVIDIA_NemoClaw
-                  - production_validator_strictly_binds_repository_SHA_workflow_run_and_payload_identity
-                  - growth_guardrail_also_contaminated_by_historical_origin_main
-                product_failure: false
-                remediation: implement_two_level_canonical_plus_PEFY_provenance_without_weakening_identity_checks
-              shard_12:
-                classification: CANONICAL_HISTORY_PORTABILITY_BLOCKER
-                missing_PEFY_refs: [v0.0.36, v0.0.55, v0.0.74, v0.0.89]
-                canonical_NVIDIA_refs_verified_present: [v0.0.36, v0.0.55, v0.0.74, v0.0.89]
-                failure: historical_upgrade_fixture_git_rev_parse_status_128
-                product_failure: false
-                remediation: reference_verified_canonical_NVIDIA_history_or_verified_read_only_mirror_do_not_blindly_retag
-      raw_npm_install_signal:
-        root_development_graph:
-          vulnerabilities_total: 9
-          low: 1
-          moderate: 2
-          high: 6
-        secondary_development_graph:
-          high: 2
-        disposition: not_a_reviewed_production_graph_blocker_because_dedicated_reviewed_npm_audit_passed
+    canonical_source: NVIDIA/NemoClaw
+    candidate_sha: fa4eea8cfc89096fe562c3624cb7ec38496ecfda
+    state: STRONG_SOURCE_AND_CI_EVIDENCE_WITH_PORTABILITY_BLOCKERS
+    positive_evidence:
+      reviewed_production_npm_audit_high_threshold: PASS
+      build_typecheck: PASS
+      installer_integration: 606_PASS_1_SKIP
+      wechat_locked_runtime_audit: PASS
+      plugin_tests: 909_PASS
+      plugin_coverage: {statements: 95.53, branches: 90.22, functions: 99.45, lines: 96.21}
+      shellcheck_SARIF: PASS
+      codeql_python: PASS
+      codeql_javascript_typescript: PASS
+      cli_shards_passed: [1, 2, 4, 5, 6, 7, 8, 11]
+      focused_timeout_probe:
+        qualification_pr: 4
+        test: setup-nim-flow-serving-profile.test.ts
+        repetitions: 5
+        result: PASS_ALL
+        classification_of_original_shard_3_failure: FLAKE_OR_CI_CONTENTION_NOT_REPRODUCIBLE
+      shard_9_focused_run: IN_PROGRESS_AT_CAPTURE
+    non_product_red_signals:
+      plugin_job: GitHub_Code_Quality_upload_HTTP_403_after_909_tests_passed
+      static_job: historical_origin_main_growth_guardrail_contamination
+    portability_blockers:
+      shard_10:
+        class: FORK_PROVENANCE_PORTABILITY
+        requirement: preserve_canonical_NVIDIA_repo_SHA_workflow_payload_identity_plus_separate_PEFY_repo_SHA_patch_digest
+      shard_12:
+        class: CANONICAL_HISTORY_PORTABILITY
+        canonical_tags_present: [v0.0.36, v0.0.55, v0.0.74, v0.0.89]
+        PEFY_fork_tags_absent: [v0.0.36, v0.0.55, v0.0.74, v0.0.89]
+        requirement: verified_canonical_refs_or_read_only_mirror_no_blind_retag
     portability_contract: governance/NEMOCLAW_FORK_PORTABILITY_CONTRACT.md
-    conclusion: exact_upstream_baseline_has_strong_positive_source_CI_evidence_but_fork_portability_and_target_runtime_gates_remain
-    blockers:
-      - explicit_DCO_attestation
-      - shard_3_rerun_pending
-      - shard_9_terminal_result_pending
-      - fork_provenance_portability_not_implemented
-      - canonical_history_portability_not_implemented
-      - GitHub_Code_Quality_feature_not_enabled_for_coverage_upload
-      - target_host_runtime_OpenShell_policy_performance_and_recovery_tests_not_yet_qualified
-      - OpenClaw_dependency_migration_not_yet_qualified
+    human_blocker: explicit_DCO_Signed_off_by_attestation
+    target_host_gates_remaining: [OpenShell_policy_isolation, credential_injection, performance, recovery, rollback, live_provider_policy]
+    merge_policy: BLOCKED_NO_AUTO_MERGE
+
+  - component: yemanlin1st/openclaw
+    migration_pr: 1
+    canonical_source: openclaw/openclaw
+    candidate_sha: b9d522738d5e087c1783e38eb1401eebcabc40de
+    version: 2026.8.1
+    schemas: {state: 9, agent: 17}
+    github_hosted_qualification_pr: 3
+    qualification_run: 32860714969
+    state: ACTIVE_QUALIFICATION
+    confirmed_passed_at_capture:
+      - frozen_dependency_install
+      - exact_version_and_schema_declarations
+      - dependency_vulnerability_gate
+      - base_config_schema
+      - sqlite_session_schema
+      - plugin_SDK_surface
+      - plugin_contracts
+      - authentication_compatibility
+      - no_conflict_markers
+      - workflow_checks
+      - runtime_sidecars
+      - plugin_inventory
+      - plugin_version_sync
+    still_running_at_capture: [strict_build_smoke, CLI_smoke_after_build, core_lint]
+    codeql_observation: upstream_matrix_security_high_skipped_on_this_PR_surface
+    target_host_gates_remaining: [state_migration_real_data, live_provider_integrations, memory_session_migration, performance, recovery, rollback]
+    merge_policy: BLOCKED_UNTIL_TERMINAL_EVIDENCE_AND_TARGET_HOST_PROOF
 
   - component: yemanlin1st/opencode
-    qualification_pr: 1
-    head: 69aaa22793bcbe0b016ad9cfad22616906766df0
-    classic_status_contexts: 0
-    pull_request_workflow_runs_observed: 0
-    conclusion: no_CI_evidence_on_PEFY_qualification_surface
-    blockers:
-      - AI_SDK_5_to_6_migration_not_tested
-      - patched_MCP_and_provider_dependencies_not_qualified
-      - Bun_1_3_14_reproducibility_not_tested
+    migration_pr: 1
+    canonical_source: anomalyco/opencode
+    candidate_sha: 69aaa22793bcbe0b016ad9cfad22616906766df0
+    toolchain: {node: 24, bun: 1.3.14, ai_sdk_generation: 6}
+    upstream_runner_issue: blacksmith_runners_unavailable_to_fork
+    github_hosted_qualification_pr: 3
+    qualification_run: 32859987207
+    state: PARTIAL_CROSS_PLATFORM_EVIDENCE
+    linux:
+      e2e: PASS
+      unit_summary: {pass: 3315, skip: 22, todo: 1, fail: 1}
+      failure: unknown_model_subprocess_duration_15212ms_exceeded_15000ms_assertion
+      classification: TIGHT_TIMING_THRESHOLD_OR_SHARED_RUNNER_CONTENTION_PENDING_REPRODUCIBILITY
+    windows:
+      unit: FAIL
+      root_cause: ripgrep_15_1_0_download_and_PowerShell_Expand_Archive_paths_exceed_5000ms_test_timeouts_and_receive_SIGTERM
+      classification: WINDOWS_PORTABILITY_BLOCKER
+      e2e: IN_PROGRESS_AT_CAPTURE
+    retained_gates_remaining: [patched_MCP_dependencies, provider_adapters, AI_SDK_5_to_6_behavior, Windows_ripgrep_portability, timing_reproducibility, performance, rollback]
+    merge_policy: BLOCKED
 
   - component: yemanlin1st/MetaGPT-x
-    qualification_pr: 1
-    head: 11cdf466d042aece04fc6cfd13b28e1a70341b1f
-    classic_status_contexts: 0
-    pull_request_workflow_runs_observed: 0
-    conclusion: no_CI_evidence_on_PEFY_qualification_surface
-    blockers:
-      - package_0_8_1_to_1_0_0_behavior_not_tested
-      - protobuf_3_to_4_compatibility_not_tested
-      - OCR_capability_retention_decision_not_executed
+    migration_pr: 1
+    canonical_source: FoundationAgents/MetaGPT
+    candidate_sha: 11cdf466d042aece04fc6cfd13b28e1a70341b1f
+    canonical_version: 1.0.0
+    supported_python: '>=3.9,<3.12'
+    canonical_qualification_pr: 4
+    discovered_cli_failure:
+      python_3_9: PASS
+      python_3_10: FAIL_WITH_CLICK_8_4_2_TYPER_0_9
+      python_3_11: FAIL_WITH_CLICK_8_4_2_TYPER_0_9
+      exception: Secondary_flag_is_not_valid_for_non_boolean_flag
+    click_compatibility_remediation:
+      pr: 5
+      patch: click_less_than_8_2_adjacent_to_typer_0_9_0
+      qualification_pr: 6
+      qualification_run: 32860882853
+      package_smoke:
+        python_3_9: PASS_INSTALL_PIPCHECK_IMPORT_CLI
+        python_3_10: PASS_INSTALL_PIPCHECK_IMPORT_CLI
+        python_3_11: PASS_INSTALL_PIPCHECK_IMPORT_CLI
+      canonical_unit_py3_10: IN_PROGRESS_AT_CAPTURE
+    ci_security_hardening:
+      legacy_unit_workflow_pr: 3
+      improvements: [pull_request_not_pull_request_target, contents_read, no_persisted_credentials, upload_artifact_v4]
+      old_0_8_1_runtime_debt: paddlepaddle_2_4_2_unavailable
+    precommit_portability:
+      canonical_problem: SSH_hook_sources_plus_checkout_v2_setup_python_v2
+      remediation_pr: 7
+      changes: [HTTPS_hook_sources, checkout_v4, setup_python_v4, contents_read, no_persisted_credentials, ubuntu_22_04]
+      status: QUALIFICATION_PENDING
+    capability_retention:
+      OCR: EXPLICIT_DECISION_REQUIRED_CANONICAL_1_0_0_COMMENTS_OCR_EXTRA_OUT
+      RAG: RETAIN_AND_REQUALIFY
+    merge_policy: BLOCKED_UNTIL_UNIT_PRECOMMIT_RETENTION_AND_INTEGRATION_GATES_PASS
 
 qualification_patterns:
   immutable_upstream_base:
-    use_when: upstream_PR_workflows_load_trusted_actions_or_policy_from_base_SHA
-    method:
-      - create_immutable_base_branch_at_exact_upstream_head
-      - create_qualification_head_from_same_SHA
-      - add_nonproduction_trigger_commit_to_head_only
-      - open_qualification_PR_head_to_immutable_base
-      - collect_evidence
-      - never_merge_trigger_PR
-    benefit: distinguishes_upstream_runtime_failure_from_historical_fork_CI_incompatibility
+    - exact_vendor_SHA_as_base
+    - qualification_head_from_same_SHA
+    - qualification_only_delta
+    - never_merge_test_PR
+  github_hosted_fallback:
+    use_when: upstream_CI_requires_unavailable_third_party_runners_or_default_branch_trusted_actions
+    rule: preserve_upstream_workflow_and_add_nonmergeable_PEFY_evidence_workflow
   fork_provenance:
-    invariant: canonical_vendor_identity_and_PEFY_fork_identity_are_recorded_separately
-    forbidden:
-      - wildcard_repository_acceptance
-      - disabling_SHA_or_digest_checks
-      - retagging_PEFY_commits_with_vendor_tag_names
-      - suppressing_historical_upgrade_tests_due_to_missing_fork_history
+    rule: canonical_vendor_identity_and_PEFY_identity_must_be_separate_and_verifiable
+  layered_remediation:
+    rule: application_compatibility_CI_portability_and_governance_changes_use_separate_reviewable_layers
 
-rules:
-  - workflow_success_with_substantive_jobs_skipped_is_not_qualification_success
-  - metadata_only_CI_must_not_satisfy_runtime_security_or_performance_gates
-  - CI_failure_before_test_execution_must_be_classified_as_harness_or_tooling_failure_not_product_failure
-  - downstream_artifact_or_coverage_upload_failure_must_not_erase_successful_underlying_test_evidence
-  - static_growth_guardrails_must_use_the_intended_PR_or_immutable_base_not_historical_fork_main
-  - upstream_workflow_trusted_actions_must_match_the_upstream_baseline_under_test
-  - raw_development_dependency_audit_output_must_not_override_a_passed_reviewed_production_graph_audit_without_dependency_level_evidence
-  - DCO_or_other_legal_attestations_require_authorized_human_action
-  - no_component_is_promoted_without_reproducible_runtime_evidence
+promotion_rules:
+  - Agent_Manager_review_required_for_material_agent_tool_skill_harness_admission_or_upgrade
+  - no_workflow_success_counts_if_substantive_jobs_are_skipped
+  - product_failure_platform_failure_harness_failure_and_governance_failure_must_be_classified_separately
+  - DCO_or_legal_attestations_require_authorized_human_action
+  - no_security_identity_or_digest_check_may_be_weakened_to_make_a_fork_green
+  - no_production_qualified_state_without_reproducible_target_host_runtime_security_performance_recovery_and_rollback_evidence
+  - qualification_PRs_and_test_trigger_branches_are_never_merge_candidates
