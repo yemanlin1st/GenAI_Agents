@@ -1,5 +1,5 @@
 {
-  "version": "1.0",
+  "version": "1.1",
   "repositories": [
     {"repository": "yemanlin1st/GenAI_Agents", "priority": "P1"},
     {"repository": "yemanlin1st/crewAI", "priority": "P1"},
@@ -8,6 +8,10 @@
     {"repository": "yemanlin1st/openclaw", "priority": "P0"},
     {"repository": "yemanlin1st/opencode", "priority": "P1"},
     {"repository": "yemanlin1st/codex", "priority": "P0"},
+    {"repository": "yemanlin1st/claude-code", "priority": "P1", "upstream": "anthropics/claude-code"},
+    {"repository": "yemanlin1st/MetaGPT-x", "priority": "P1", "upstream": "FoundationAgents/MetaGPT"},
+    {"repository": "PEFY-TECH/NemoClaw", "priority": "P0", "upstream": "NVIDIA/NemoClaw"},
+    {"repository": "yemanlin1st/NemoClaw", "priority": "P2", "upstream": "PEFY-TECH/NemoClaw"},
     {"repository": "yemanlin1st/DeepFlow", "priority": "P3"},
     {"repository": "deepseek-ai/deepseek-harness", "priority": "P1", "upstream_only": true}
   ]
