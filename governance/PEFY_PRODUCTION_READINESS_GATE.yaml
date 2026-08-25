@@ -1,0 +1,114 @@
+version: 1.0
+name: PEFY Production Readiness Gate
+status_model:
+  - DEVELOPMENT
+  - SANDBOX_QUALIFIED
+  - CONTROLLED_PILOT
+  - PRE_PRODUCTION_QUALIFIED
+  - PRODUCTION_QUALIFIED
+  - QUARANTINED
+rules:
+  production_qualified_requires_all_mandatory: true
+  skipped_mandatory_gate_is_pass: false
+  cancelled_gate_is_pass: false
+  missing_evidence_is_pass: false
+  source_ci_is_sufficient_for_production: false
+  qualification_only_pr_may_merge_to_production: false
+mandatory_gates:
+  ownership:
+    - accountable_business_owner
+    - accountable_technical_owner
+    - production_service_owner
+  source_integrity:
+    - immutable_candidate_identity
+    - canonical_source_and_upstream_recorded
+    - local_patch_inventory
+    - provenance_verified
+    - license_ip_review
+    - third_party_notices_when_required
+  build_supply_chain:
+    - reproducible_or_acceptably_repeatable_build
+    - lockfile_or_dependency_resolution_integrity
+    - dependency_vulnerability_gate
+    - secret_scan
+    - sast_or_equivalent
+    - sbom_for_releasable_software
+    - artifact_identity_and_digest
+  quality:
+    - unit_tests
+    - integration_tests
+    - e2e_or_system_tests
+    - regression_tests
+    - compatibility_matrix
+    - accessibility_when_user_facing
+  security:
+    - threat_model
+    - least_privilege
+    - identity_and_session_controls
+    - secrets_management
+    - data_boundary_and_privacy
+    - network_egress_review
+    - supply_chain_security
+    - high_risk_red_team_or_security_review
+  target_runtime:
+    - target_host_or_equivalent_runtime_test
+    - configuration_validation
+    - external_dependency_validation
+    - migration_test_when_state_changes
+    - startup_shutdown_restart
+  performance_capacity:
+    - latency_or_response_target
+    - throughput_or_concurrency_target
+    - cpu_memory_storage_baseline
+    - cost_or_resource_budget
+    - saturation_backpressure_behavior
+  resilience:
+    - failure_injection_or_failure_path_tests
+    - backup_restore_when_stateful
+    - rollback_proof
+    - recovery_proof
+    - rto_rpo_when_applicable
+  operations:
+    - logs_metrics_traces
+    - alerting
+    - health_readiness_checks
+    - runbook
+    - incident_ownership
+    - release_and_change_plan
+    - support_escalation
+  governance:
+    - agent_manager_review_when_agentic
+    - required_council_review
+    - compliance_evidence
+    - residual_risk_record
+    - human_approval_when_required
+failure_policy:
+  classifications:
+    - PRODUCT
+    - PLATFORM
+    - HARNESS
+    - GOVERNANCE
+    - UPSTREAM
+    - TRANSIENT
+    - HUMAN_ATTESTATION
+  bypass_requires:
+    - named_authorized_approver
+    - written_risk_acceptance
+    - scope_and_expiry
+    - compensating_controls
+    - rollback_plan
+  security_integrity_identity_provenance_bypass_default: prohibited
+promotion_record_required_fields:
+  - project_id
+  - release_or_candidate_id
+  - source_sha
+  - artifact_digest
+  - environment
+  - evidence_bundle
+  - test_summary
+  - security_summary
+  - performance_summary
+  - rollback_reference
+  - residual_risks
+  - approvers
+  - timestamp
