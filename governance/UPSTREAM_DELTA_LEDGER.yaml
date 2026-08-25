@@ -1,4 +1,4 @@
-version: 1.3
+version: 1.4
 purpose: >-
   Registry for preserving intentional PEFY deltas from externally-derived repositories.
   Entries are evidence records, not automatic upgrade permissions. Multi-hop fork
@@ -41,10 +41,28 @@ entries:
   - repository: yemanlin1st/n8n
     upstream: n8n-io/n8n
     state: U1
+    local_head: ffcbb0702f30c3d5461c43682706c9bcb8848b70
+    upstream_head: b4d91bfe8a293106815b308a841e210562002735
     ahead_by: 0
-    behind_by: 7640
-    remediation: major_migration_scale_qualification
-    local_delta_policy: preserve_workflows_credentials_schema_and_runtime_compatibility
+    behind_by: 7644
+    local_version: 1.115.0
+    upstream_generation: 2.37.0
+    runtime_delta:
+      node: ">=22.16 -> >=24.0.0"
+      pnpm: ">=10.16.1 -> >=11.22.0"
+    license_local: Sustainable-Use-License-1.0
+    license_upstream: Sustainable-Use-License-1.0
+    license_constraints:
+      - main_code_internal_business_or_noncommercial_use_subject_to_license_terms
+      - dot_ee_files_and_directories_require_applicable_n8n_enterprise_license
+      - client_facing_saas_resale_redistribution_or_commercial_service_use_requires_explicit_legal_license_review
+      - notices_and_modified_copy_obligations_must_be_preserved
+    remediation: major_generation_migration_with_database_workflow_credentials_runtime_and_license_qualification
+    local_delta_policy: preserve_workflows_credentials_encryption_schema_custom_nodes_webhooks_worker_topology_and_runtime_compatibility
+    qualification_branch: upstream-sync/2026-08-25-v2
+    prior_qualification_branch: upstream-sync/2026-08-25
+    rollback_ref: rollback/2025-10-07
+    qualification_pr: 1
     priority: P1
 
   - repository: yemanlin1st/openclaw
@@ -93,9 +111,10 @@ entries:
     behind_by: 9661
     license_local: Apache-2.0
     license_upstream: Apache-2.0
-    remediation: separate_pefy_overlay_then_rebase_or_reapply_on_current_upstream
-    local_delta_policy: preserve_pea_governance_mcp_security_and_account_control_content_as_owned_overlay
-    conflict_classes: [C1, C2, C3, C4, C5]
+    remediation: extract_pefy_non_code_overlay_then_use_current_upstream_code_baseline
+    local_delta_policy: preserve_16_pea_governance_mcp_security_and_workflow_artifacts_in_sovereign_control_plane
+    core_code_modified_by_pefy_delta: false
+    conflict_classes: [C2, C4, C5]
     qualification_branch: upstream-sync/2026-08-25
     rollback_ref: pefy-delta/2026-06-16
     qualification_pr: 1
@@ -109,8 +128,9 @@ entries:
     ahead_by: 0
     behind_by: 170
     license_local: UNKNOWN
-    license_upstream: UNKNOWN
-    remediation: bounded_qualification_then_sync
+    license_upstream: VENDOR_TERMS_REVIEW
+    source_type: vendor_distribution
+    remediation: prefer_official_supported_distribution_and_track_compatibility_pending_legal_ip_review
     local_delta_policy: none_detected_preserve_external_configuration_hooks_and_mcp_settings
     qualification_branch: upstream-sync/2026-08-25
     rollback_ref: rollback/2026-03-28
@@ -199,17 +219,22 @@ entry_schema:
     - upstream_head
     - ahead_by
     - behind_by
+    - local_version
+    - upstream_generation
+    - source_type
     - inherited_canonical_drift
     - license_local
     - license_upstream
     - license_metadata_upstream
     - license_evidence
+    - license_constraints
     - runtime_delta
     - schema_delta
     - security_delta
     - performance_delta
     - conflict_classes
     - qualification_branch
+    - prior_qualification_branch
     - rollback_ref
     - qualification_pr
     - evidence
