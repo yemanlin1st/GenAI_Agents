@@ -1,7 +1,8 @@
-version: 1.1
+version: 1.2
 purpose: >-
   Registry for preserving intentional PEFY deltas from externally-derived repositories.
-  Entries are evidence records, not automatic upgrade permissions.
+  Entries are evidence records, not automatic upgrade permissions. Multi-hop fork
+  chains retain parent, canonical source and tracked-upstream relationships.
 
 states:
   U0: clean
@@ -59,6 +60,7 @@ entries:
     local_delta_policy: no_local_commits_detected_but_preserve_runtime_configuration_and_user_data_externally
     qualification_branch: upstream-sync/2026-08-25
     rollback_ref: rollback/2026-04-03
+    qualification_pr: 1
     priority: P0
 
   - repository: yemanlin1st/opencode
@@ -74,6 +76,7 @@ entries:
     local_delta_policy: no_local_commits_detected_preserve_external_configuration_and_provider_routing
     qualification_branch: upstream-sync/2026-08-25
     rollback_ref: rollback/2026-03-15
+    qualification_pr: 1
     priority: P1
 
   - repository: yemanlin1st/codex
@@ -90,7 +93,77 @@ entries:
     conflict_classes: [C1, C2, C3, C4, C5]
     qualification_branch: upstream-sync/2026-08-25
     rollback_ref: pefy-delta/2026-06-16
+    qualification_pr: 1
     priority: P0
+
+  - repository: yemanlin1st/claude-code
+    upstream: anthropics/claude-code
+    state: U1
+    local_head: 2923bc87d10da4fda57570313f2abbc5b457fed1
+    upstream_head: 1af51fd77b7e40017c1032249db75fe582d23283
+    ahead_by: 0
+    behind_by: 170
+    license_local: UNKNOWN
+    license_upstream: UNKNOWN
+    remediation: bounded_qualification_then_sync
+    local_delta_policy: none_detected_preserve_external_configuration_hooks_and_mcp_settings
+    qualification_branch: upstream-sync/2026-08-25
+    rollback_ref: rollback/2026-03-28
+    qualification_pr: 1
+    priority: P1
+
+  - repository: yemanlin1st/MetaGPT-x
+    fork_parent: hekpac/MetaGPT-x
+    canonical_source: FoundationAgents/MetaGPT
+    upstream: FoundationAgents/MetaGPT
+    state: U1
+    local_head: 2b160f294936f5b6c29cde63b8e4aa65e9a2ef9f
+    upstream_head: 11cdf466d042aece04fc6cfd13b28e1a70341b1f
+    ahead_by: 0
+    behind_by: 1495
+    license_local: MIT
+    license_upstream: MIT
+    remediation: migration_to_canonical_source_not_intermediate_fork
+    local_delta_policy: none_detected_keep_pefy_orchestration_external_as_adapter
+    qualification_branch: upstream-source/2026-08-25
+    rollback_ref: rollback/2024-11-11
+    qualification_pr: 1
+    priority: P1
+
+  - repository: PEFY-TECH/NemoClaw
+    canonical_source: NVIDIA/NemoClaw
+    upstream: NVIDIA/NemoClaw
+    state: U1
+    local_head: 1e23347c0d74368f040fefd6eab1f4f45dbdc2b3
+    upstream_head: fa4eea8cfc89096fe562c3624cb7ec38496ecfda
+    ahead_by: 0
+    behind_by: 4757
+    license_local: Apache-2.0
+    license_upstream: Apache-2.0
+    remediation: organization_level_migration_before_downstream_fork_propagation
+    local_delta_policy: none_detected_preserve_pefy_runtime_configuration_outside_upstream_code
+    qualification_branch: upstream-sync/2026-08-25
+    rollback_ref: rollback/2026-03-18
+    qualification_pr: 1
+    priority: P0
+
+  - repository: yemanlin1st/NemoClaw
+    fork_parent: PEFY-TECH/NemoClaw
+    canonical_source: NVIDIA/NemoClaw
+    upstream: PEFY-TECH/NemoClaw
+    state: U0
+    local_head: 1e23347c0d74368f040fefd6eab1f4f45dbdc2b3
+    upstream_head: 1e23347c0d74368f040fefd6eab1f4f45dbdc2b3
+    ahead_by: 0
+    behind_by: 0
+    inherited_canonical_drift:
+      state: U1
+      behind_by: 4757
+    license_local: Apache-2.0
+    license_upstream: Apache-2.0
+    remediation: wait_for_PEFY_TECH_qualification_then_propagate_verified_commit
+    local_delta_policy: none_detected
+    priority: P2
 
   - repository: yemanlin1st/DeepFlow
     upstream: DeepFlowcc/DeepFlow
@@ -121,10 +194,13 @@ entry_schema:
     - local_delta_policy
     - priority
   optional:
+    - fork_parent
+    - canonical_source
     - local_head
     - upstream_head
     - ahead_by
     - behind_by
+    - inherited_canonical_drift
     - license_local
     - license_upstream
     - runtime_delta
@@ -134,6 +210,7 @@ entry_schema:
     - conflict_classes
     - qualification_branch
     - rollback_ref
+    - qualification_pr
     - evidence
     - owner
     - next_review
