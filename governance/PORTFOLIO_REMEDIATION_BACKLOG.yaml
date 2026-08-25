@@ -1,4 +1,4 @@
-version: 1.2
+version: 1.3
 name: PEFY Portfolio Remediation Backlog
 updated: 2026-08-25
 
@@ -36,10 +36,14 @@ items:
     upstream: openai/codex
     state: U3
     drift: {ahead: 16, behind: 9661}
-    action: extract_pefy_overlay_then_rebase_code_integration_on_current_upstream
+    action: migrate_16_non_code_pefy_overlay_artifacts_then_qualify_clean_current_upstream_baseline
     qualification_pr: 1
     rollback: pefy-delta/2026-06-16
-    blocker: no_CI_evidence_yet
+    resolved_findings:
+      - pefy_local_delta_modifies_no_codex_core_source_file
+    blockers:
+      - private_control_plane_destination_not_available_from_current_connector
+      - no_runtime_qualification_evidence_yet
 
   - id: OCL-001
     priority: P0
@@ -89,8 +93,28 @@ items:
     component: yemanlin1st/n8n
     upstream: n8n-io/n8n
     state: U1
-    drift: {ahead: 0, behind: 7640}
-    action: qualify_database_workflow_credentials_worker_webhook_and_runtime_migration
+    source_type: FAIR_CODE_RESTRICTED
+    drift: {ahead: 0, behind: 7644}
+    versions:
+      local: 1.115.0
+      upstream_generation: 2.37.0
+    runtime_delta:
+      node: ">=22.16 -> >=24.0.0"
+      pnpm: ">=10.16.1 -> >=11.22.0"
+    action: qualify_major_generation_database_workflow_credentials_worker_webhook_custom_node_and_runtime_migration
+    qualification_pr: 1
+    qualification_branch: upstream-sync/2026-08-25-v2
+    prior_qualification_branch: upstream-sync/2026-08-25
+    rollback: rollback/2025-10-07
+    blockers:
+      - no_CI_evidence_yet
+      - database_and_encryption_migration_not_qualified
+      - workflow_and_custom_node_compatibility_not_qualified
+      - intended_commercial_or_client_facing_use_requires_license_legal_review
+    license_controls:
+      - Sustainable_Use_License_applies_to_main_non_enterprise_code_subject_to_its_terms
+      - dot_ee_code_requires_applicable_n8n_Enterprise_License
+      - preserve_notices_and_modified_copy_obligations
 
   - id: DFR-001
     priority: P1
@@ -124,8 +148,9 @@ items:
     component: yemanlin1st/claude-code
     upstream: anthropics/claude-code
     state: U1
+    source_type: VENDOR_DISTRIBUTION
     drift: {ahead: 0, behind: 170}
-    action: bounded_qualification_then_sync
+    action: prefer_official_supported_distribution_and_track_compatibility_pending_legal_ip_review
     qualification_pr: 1
     rollback: rollback/2026-03-28
     blockers:
@@ -137,6 +162,7 @@ items:
     component: DeepSeek_Harness_skill
     upstream: deepseek-ai/deepseek-harness
     state: EXPERIMENTAL
+    source_type: [OSS_PERMISSIVE, EXPERIMENTAL_PREVIEW]
     action: pin_tested_sdk_and_runtime_versions_before_production_like_use
     blockers:
       - developer_preview
@@ -167,6 +193,7 @@ items:
     component: yemanlin1st/DeepFlow
     upstream: DeepFlowcc/DeepFlow
     state: U0
+    source_type: OSS_COPYLEFT
     drift: {ahead: 0, behind: 0}
     action: monitor_dormancy_license_and_successor_risk
 
@@ -178,4 +205,6 @@ portfolio_rules:
   - remediate_multi_hop_forks_at_the_authoritative_layer_first
   - discovery_catalogs_are_never_automatic_runtime_dependencies
   - license_metadata_NOASSERTION_must_be_verified_against_real_license_files_before_blocking
+  - public_readability_does_not_imply_permissive_redistribution_rights
+  - source_type_policy_must_be_applied_before_upgrade_or_commercialization
   - close_or_downgrade_items_only_with_evidence
