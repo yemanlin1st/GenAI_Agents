@@ -1,0 +1,204 @@
+version: 1.0
+name: PEFY Capability Authority Map
+purpose: >-
+  Prevent duplicate orchestration, uncontrolled framework proliferation and ambiguous
+  decision authority across the PEFY AI/agentic ecosystem. Components are assigned
+  explicit roles. A subordinate runtime may execute work but may not silently become
+  the sovereign control plane.
+
+authority_tiers:
+  A0_PRINCIPAL:
+    authority: final_human_decision
+    may_override: all_subject_to_law_security_and_recorded_risk_acceptance
+
+  A1_SOVEREIGN_CONTROL:
+    components:
+      - MƐTAPEFYON_Ω
+      - MƐTAFLOW_Ω
+      - PEA
+    authority:
+      - intent_interpretation
+      - policy_routing
+      - council_selection
+      - execution_runtime_selection
+      - approval_gate_enforcement
+      - evidence_and_release_state
+    rule: exactly_one_sovereign_control_path_per_work_item
+
+  A2_GOVERNANCE_SECURITY_ASSURANCE:
+    components:
+      - council_fabric
+      - counsellors
+      - red_team_review
+      - security_privacy_review
+      - compliance_ip_review
+      - release_change_control
+      - independent_verifiers
+    authority:
+      - challenge
+      - block_on_defined_gates
+      - validate
+      - record_dissent
+    rule: advisory_or_gatekeeping_not_parallel_execution_orchestration
+
+  A3_EXECUTION_RUNTIMES:
+    rule: selected_by_A1_policy_per_task
+    families:
+      coding_agents:
+        primary_candidates:
+          - codex
+          - claude_code
+          - opencode
+          - deepseek_harness
+        constraints:
+          - one_primary_runtime_per_execution_stage
+          - one_fallback_maximum_unless_incident_mode
+          - benchmark_before_changing_default
+          - deepseek_harness_is_experimental_until_pinned_and_qualified
+      multi_agent_frameworks:
+        candidates:
+          - crewAI
+          - deer_flow
+          - MetaGPT
+        constraints:
+          - use_only_when_task_benefits_from_role_parallelism_or_decomposition
+          - never_nest_multi_agent_frameworks_by_default
+          - no_framework_may_override_A1_governance
+      workflow_automation:
+        candidates:
+          - n8n
+        authority:
+          - durable_event_and_integration_workflows
+          - scheduled_and_external_system_automation
+        prohibited:
+          - sovereign_reasoning_authority
+          - unreviewed_secret_or_production_mutation
+      agent_gateway_personal_runtime:
+        candidates:
+          - OpenClaw
+        authority:
+          - channel_gateway
+          - session_and_agent_runtime_functions
+        prohibited:
+          - replacing_A1_control_plane
+      secure_sandbox_runtime:
+        candidates:
+          - NemoClaw
+          - NVIDIA_OpenShell
+        authority:
+          - isolation
+          - execution_policy_boundary
+          - managed_inference_where_qualified
+        prohibited:
+          - bypassing_PEFY_security_policy
+      agent_development_reference:
+        candidates:
+          - DeepFlow
+        default_state: reference_or_experimental
+        promotion_rule: benchmark_and_maintenance_viability_required
+
+  A4_ADAPTERS_TOOLS_SKILLS:
+    components:
+      - MCP_adapters
+      - model_provider_adapters
+      - repository_tools
+      - sandbox_tools
+      - search_retrieval_tools
+      - vector_indexes
+      - skill_packages
+    rule: capability_only_no_independent_governance_authority
+
+  A5_DISCOVERY_REFERENCE:
+    patterns:
+      - awesome_*
+      - '*-guide'
+      - '*-tips'
+      - '*-course'
+      - '*-examples'
+      - '*-templates'
+      - '*-marketplace'
+      - '*-system-prompts'
+      - learning_or_curated_catalogs
+    authority: none
+    rules:
+      - never_auto_install
+      - never_auto_execute
+      - provenance_review_before_import
+      - copy_only_minimum_qualified_capability
+      - preserve_license_and_attribution
+
+routing_policy:
+  software_engineering:
+    choose_from: [codex, claude_code, opencode, deepseek_harness]
+    selection_metrics:
+      - task_success_rate
+      - code_quality
+      - security_gate_pass_rate
+      - latency
+      - memory
+      - token_and_api_cost
+      - tool_reliability
+      - repo_scale_fit
+    default_parallelism: 1
+    maximum_fallbacks: 1
+
+  role_based_multi_agent_work:
+    choose_from: [crewAI, deer_flow, MetaGPT]
+    default_parallelism: bounded_by_task_and_resource_budget
+    rule: framework_selected_once_then_subagents_live_inside_that_framework_or_A1_native_pool
+
+  external_workflow_automation:
+    choose_from: [n8n]
+    rule: use_for_durable_workflow_state_not_for_core_reasoning
+
+  gateway_or_channel_agent:
+    choose_from: [OpenClaw]
+    rule: keep_gateway_state_separate_from_sovereign_policy_state
+
+  high_isolation_agent_execution:
+    choose_from: [NemoClaw, NVIDIA_OpenShell]
+    rule: security_boundary_must_remain_enforced_even_if_agent_requests_more_privilege
+
+resource_governor:
+  goals:
+    - minimize_idle_memory
+    - minimize_duplicate_model_contexts
+    - minimize_duplicate_vector_indexes
+    - minimize_recursive_agent_loops
+    - minimize_unnecessary_network_and_api_calls
+  rules:
+    - lazy_load_execution_runtimes
+    - unload_or_suspend_idle_runtimes_where_supported
+    - share_read_only_model_and_embedding_services_when_security_tier_allows
+    - one_authoritative_vector_index_per_knowledge_domain_unless_isolation_requires_separation
+    - cap_subagent_concurrency_by_cpu_gpu_memory_token_and_cost_budget
+    - use_smallest_capable_model_for_routine_steps
+    - escalate_model_or_framework_only_on_measured_need
+    - cache_stable_read_only_results_with_explicit_invalidation
+    - never_trade_security_or_correctness_for_memory_reduction
+
+state_separation:
+  sovereign_policy_state: A1_only
+  execution_session_state: runtime_specific
+  durable_workflow_state: workflow_engine
+  secrets: approved_secret_manager_only
+  evidence: governed_evidence_store
+  vector_memory: domain_scoped_and_access_controlled
+  trajectories: sensitive_operational_data_with_retention_policy
+
+anti_duplication_decision:
+  KEEP: unique_high_value_capability_and_maintainable
+  IMPROVE: valuable_but_gap_exists
+  INTEGRATE: unique_capability_better_as_adapter
+  CONSOLIDATE: overlaps_with_authoritative_component
+  REPLACE: materially_inferior_or_unsupported
+  DEPRECATE: retained_temporarily_for_migration_or_compatibility
+  ARCHIVE: no_longer_required_but_provenance_must_be_retained
+  DISCOVERY_ONLY: useful_reference_not_runtime
+
+promotion_rules:
+  - no_A5_component_promotes_directly_to_A3
+  - every_A3_runtime_requires_owner_version_update_policy_security_tier_and_benchmark
+  - every_new_framework_must_show_capability_gap_not_already_covered
+  - overlapping_frameworks_require_comparative_benchmark_before_both_remain_active
+  - production_default_change_requires_release_qualification_matrix
