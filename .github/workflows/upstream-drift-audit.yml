@@ -2,6 +2,12 @@ name: PEFY Upstream Drift Audit
 
 on:
   workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - "scripts/upstream_audit.py"
+      - "governance/UPSTREAM_MANAGEMENT_POLICY.md"
+      - ".github/workflows/upstream-drift-audit.yml"
   schedule:
     - cron: "17 2 * * *"
 
