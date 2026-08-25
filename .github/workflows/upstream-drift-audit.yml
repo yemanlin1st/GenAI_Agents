@@ -1,0 +1,49 @@
+name: PEFY Upstream Drift Audit
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "17 2 * * *"
+
+permissions:
+  contents: read
+
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    env:
+      GITHUB_OWNER: yemanlin1st
+      GH_TOKEN: ${{ secrets.PEFY_PORTFOLIO_READ_TOKEN || github.token }}
+      OUTPUT_DIR: artifacts/upstream
+
+    steps:
+      - name: Checkout governance repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Compile upstream auditor
+        run: python -m py_compile scripts/upstream_audit.py
+
+      - name: Run upstream drift audit
+        run: python scripts/upstream_audit.py
+
+      - name: Show concise report
+        if: always()
+        run: |
+          if [ -f artifacts/upstream/upstream-audit.md ]; then
+            sed -n '1,120p' artifacts/upstream/upstream-audit.md
+          fi
+
+      - name: Upload audit evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: pefy-upstream-drift-audit
+          path: artifacts/upstream/
+          if-no-files-found: warn
+          retention-days: 30
