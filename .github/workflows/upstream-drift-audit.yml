@@ -1,4 +1,4 @@
-name: PEFY Upstream Drift Audit
+name: PEFY Portfolio and Upstream Audit
 
 on:
   workflow_dispatch:
@@ -9,23 +9,26 @@ on:
       - governance/portfolio-hardening-2026-08-25
     paths:
       - script/upstream_audit.py
+      - script/portfolio_inventory.py
       - governance/UPSTREAM_WATCHLIST.json
       - governance/UPSTREAM_DELTA_LEDGER.yaml
       - governance/UPSTREAM_REMEDIATION_POLICY.md
+      - governance/PORTFOLIO_SCOPE.json
+      - governance/PEFY_CAPABILITY_AUTHORITY_MAP.yaml
       - .github/workflows/upstream-drift-audit.yml
 
 permissions:
   contents: read
 
 concurrency:
-  group: pefy-upstream-audit-${{ github.ref }}
+  group: pefy-portfolio-audit-${{ github.ref }}
   cancel-in-progress: true
 
 jobs:
   audit:
-    name: Read-only upstream portfolio audit
+    name: Read-only portfolio and upstream audit
     runs-on: ubuntu-latest
-    timeout-minutes: 15
+    timeout-minutes: 25
 
     steps:
       - name: Checkout
@@ -36,11 +39,28 @@ jobs:
         with:
           python-version: '3.12'
 
-      - name: Compile auditor
-        run: python -m py_compile script/upstream_audit.py
+      - name: Compile audit tools
+        run: |
+          python -m py_compile script/upstream_audit.py
+          python -m py_compile script/portfolio_inventory.py
 
-      - name: Run audit and retain exit code
-        id: audit
+      - name: Run portfolio inventory and retain exit code
+        id: inventory
+        shell: bash
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+          PEFY_PORTFOLIO_TOKEN: ${{ secrets.PEFY_PORTFOLIO_TOKEN }}
+        run: |
+          set +e
+          python script/portfolio_inventory.py \
+            --scope governance/PORTFOLIO_SCOPE.json \
+            --out-dir artifacts/portfolio-inventory
+          rc=$?
+          echo "exit_code=$rc" >> "$GITHUB_OUTPUT"
+          exit 0
+
+      - name: Run upstream audit and retain exit code
+        id: upstream
         shell: bash
         env:
           GITHUB_TOKEN: ${{ github.token }}
@@ -54,15 +74,29 @@ jobs:
           echo "exit_code=$rc" >> "$GITHUB_OUTPUT"
           exit 0
 
-      - name: Show concise report
+      - name: Show concise reports
         if: always()
         shell: bash
         run: |
+          if [ -f artifacts/portfolio-inventory/portfolio-inventory.md ]; then
+            echo '===== PORTFOLIO INVENTORY ====='
+            sed -n '1,160p' artifacts/portfolio-inventory/portfolio-inventory.md
+          fi
           if [ -f artifacts/upstream-audit/upstream-audit.md ]; then
-            sed -n '1,160p' artifacts/upstream-audit/upstream-audit.md
+            echo '===== UPSTREAM AUDIT ====='
+            sed -n '1,180p' artifacts/upstream-audit/upstream-audit.md
           fi
 
-      - name: Upload evidence
+      - name: Upload portfolio inventory evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: pefy-portfolio-inventory-${{ github.run_id }}
+          path: artifacts/portfolio-inventory/
+          if-no-files-found: error
+          retention-days: 30
+
+      - name: Upload upstream audit evidence
         if: always()
         uses: actions/upload-artifact@v4
         with:
@@ -71,16 +105,19 @@ jobs:
           if-no-files-found: error
           retention-days: 30
 
-      - name: Enforce audit result
+      - name: Enforce audit results after evidence upload
         if: always()
         shell: bash
         run: |
-          rc='${{ steps.audit.outputs.exit_code }}'
-          if [ -z "$rc" ]; then
-            echo 'Audit did not produce an exit code.' >&2
+          inventory_rc='${{ steps.inventory.outputs.exit_code }}'
+          upstream_rc='${{ steps.upstream.outputs.exit_code }}'
+
+          if [ -z "$inventory_rc" ] || [ -z "$upstream_rc" ]; then
+            echo 'One or more audit stages did not produce an exit code.' >&2
             exit 3
           fi
-          if [ "$rc" -ne 0 ]; then
-            echo "Audit completed with evidence but returned code $rc." >&2
-            exit "$rc"
+
+          if [ "$inventory_rc" -ne 0 ] || [ "$upstream_rc" -ne 0 ]; then
+            echo "Portfolio inventory rc=$inventory_rc; upstream audit rc=$upstream_rc" >&2
+            exit 2
           fi
