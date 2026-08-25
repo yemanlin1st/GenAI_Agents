@@ -1,4 +1,4 @@
-version: 1.1
+version: 1.2
 updated: 2026-08-25
 scope: convergence_wave_02
 status: EVIDENCE_PARTIAL_NOT_PRODUCTION_QUALIFIED
@@ -61,20 +61,47 @@ components:
         head_branch: qualification/full-ci-2026-08-25
         head_sha: 70e708c734cf64f0b25f19c9c380e5d82ae7ebc3
         delta: one_qualification_only_text_file
+        confirmed_results:
+          changed_path_detection: success
+          PR_title_lint: success
+          dco_declaration: failure_human_attestation_required
+          wechat_runtime_audit: success
+          plugin_functional_tests:
+            test_files_passed: 33
+            tests_passed: 909
+            statements_coverage_percent: 95.53
+            branches_coverage_percent: 90.22
+            functions_coverage_percent: 99.45
+            lines_coverage_percent: 96.21
+            functional_conclusion: success
+            job_conclusion: failure
+            job_failure_class: platform_configuration
+            job_failure_reason: GitHub_Code_Quality_not_enabled_HTTP_403_during_coverage_upload
+            product_failure: false
+          security_code_scanning:
+            shellcheck_SARIF_generation_and_upload_steps: success_so_far
+            codeql_python: running
+            codeql_javascript_typescript: running
+          remaining_jobs: running
         expected_effect: >-
           Test exact NVIDIA upstream code with the trusted reusable CI actions from the
           same upstream base SHA, eliminating historical-fork CI incompatibility.
       npm_install_signal:
-        observed_in: migration_PR_title_lint_dependency_install
-        vulnerabilities_total: 9
-        low: 1
-        moderate: 2
-        high: 6
-        disposition: provisional_signal_requires_current_reviewed_npm_audit_on_valid_harness
-    conclusion: current_upstream_exact_baseline_under_valid_full_CI_qualification
+        observed_during_valid_plugin_job: true
+        root_graph:
+          vulnerabilities_total: 9
+          low: 1
+          moderate: 2
+          high: 6
+        secondary_graph:
+          high: 2
+        disposition: provisional_until_reviewed_npm_audit_completes
+    conclusion: exact_upstream_baseline_under_valid_full_CI_with_initial_positive_functional_evidence
     blockers:
       - explicit_DCO_attestation
-      - exact_upstream_full_CI_results_pending
+      - reviewed_npm_audit_pending
+      - remaining_build_static_installer_cli_and_codeql_results_pending
+      - GitHub_Code_Quality_feature_not_enabled_for_coverage_upload
       - target_host_runtime_and_OpenShell_policy_tests_not_yet_qualified
 
   - component: yemanlin1st/opencode
@@ -115,6 +142,7 @@ rules:
   - workflow_success_with_substantive_jobs_skipped_is_not_qualification_success
   - metadata_only_CI_must_not_satisfy_runtime_security_or_performance_gates
   - CI_failure_before_test_execution_must_be_classified_as_harness_or_tooling_failure_not_product_failure
+  - downstream_artifact_or_coverage_upload_failure_must_not_erase_successful_underlying_test_evidence
   - upstream_workflow_trusted_actions_must_match_the_upstream_baseline_under_test
   - unresolved_dependency_vulnerability_signals_block_security_qualification
   - DCO_or_other_legal_attestations_require_authorized_human_action
