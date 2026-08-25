@@ -1,16 +1,26 @@
-version: 1.2
+version: 1.3
 updated: 2026-08-25
 scope: convergence_wave_02
 status: EVIDENCE_PARTIAL_NOT_PRODUCTION_QUALIFIED
 
 components:
   - component: yemanlin1st/openclaw
-    qualification_pr: 1
-    head: b9d522738d5e087c1783e38eb1401eebcabc40de
-    classic_status_contexts: 0
-    pull_request_workflow_runs_observed: 0
-    conclusion: no_CI_evidence_on_PEFY_qualification_surface
+    migration_pr: 1
+    production_candidate_head: b9d522738d5e087c1783e38eb1401eebcabc40de
+    qualification_pr: 2
+    qualification_harness:
+      immutable_base_branch: qualification/upstream-base-2026-08-25
+      base_sha: b9d522738d5e087c1783e38eb1401eebcabc40de
+      head_branch: qualification/full-ci-2026-08-25
+      head_sha: 2e4e134ede6bfd606247c8e34e9cd7aeaa1545fc
+      delta: one_qualification_only_text_file
+      draft: false
+      merge_policy: NEVER_MERGE
+      observed_pull_request_workflow_runs: 0
+      repository_actions_query_total_count: 0
+    conclusion: qualification_harness_correctly_constructed_but_GitHub_Actions_not_executing_on_fork
     blockers:
+      - no_Actions_execution_on_yemanlin1st_openclaw_fork
       - state_and_agent_schema_migration_not_tested
       - runtime_plugin_provider_memory_and_session_migration_not_tested
       - no_security_or_performance_evidence
@@ -38,21 +48,10 @@ components:
         base: 1e23347c0d74368f040fefd6eab1f4f45dbdc2b3
         head: 70e708c734cf64f0b25f19c9c380e5d82ae7ebc3
         gate: true
-        observed_failures:
-          - build_typecheck
-          - static_checks
-          - reviewed_npm_audit
-          - installer_integration
-          - plugin_tests
-          - wechat_runtime_audit
-          - all_12_cli_coverage_shards
         root_cause: >-
           Current upstream workflows intentionally load trusted reusable CI actions from
           github.event.pull_request.base.sha. Historical PEFY main did not contain the
           current actions, so jobs failed before substantive upstream code tests.
-        representative_errors:
-          - missing_.github/actions/ci-build-typecheck/action.yml_at_historical_base
-          - missing_.github/actions/ci-reviewed-npm-audit/action.yml_at_historical_base
         conclusion: invalid_as_runtime_compatibility_result_but_valid_as_CI_base_mismatch_evidence
       exact_upstream_full_ci_harness_pr_3:
         state: RUNNING
@@ -66,6 +65,18 @@ components:
           PR_title_lint: success
           dco_declaration: failure_human_attestation_required
           wechat_runtime_audit: success
+          reviewed_production_npm_audit:
+            conclusion: success
+            threshold: high
+            reviewed_graph_high_or_above_findings: 0
+            exceptions: 0
+            note: raw_development_install_findings_do_not_equal_reviewed_production_graph_findings
+          build_typecheck: success
+          installer_integration:
+            conclusion: success
+            test_files_passed: 22
+            tests_passed: 606
+            tests_skipped: 1
           plugin_functional_tests:
             test_files_passed: 33
             tests_passed: 909
@@ -78,31 +89,55 @@ components:
             job_failure_class: platform_configuration
             job_failure_reason: GitHub_Code_Quality_not_enabled_HTTP_403_during_coverage_upload
             product_failure: false
+          static_checks:
+            job_conclusion: failure
+            security_and_integrity_checks_before_failure:
+              createRequire_allowlist_ratchet: success
+              hadolint_binary_checksum: success
+              sandbox_lockfile_validation: success
+              reviewed_MCP_runtime_bundle: success
+              config_schema_validation: success_55_of_55
+              scorecard_typecheck: success
+              SPDX_headers: success
+              oxlint_type_aware: success
+              managed_inference_catalog: success
+              repository_checks: success
+              env_var_documentation_gate: success
+              shellcheck: success
+              hadolint: success
+              gitleaks_secret_scan: success
+              markdownlint: success
+              e2e_semantic_phase_plans: success
+            failing_control: codebase_growth_guardrails
+            failure_class: qualification_harness_comparison_base_artifact
+            root_cause: >-
+              The growth-guardrail loader defaults to origin/main unless NEMOCLAW_GROWTH_PR=1.
+              In the PEFY fork origin/main is the historical March baseline, so the guardrail
+              interprets the entire NVIDIA migration as current PR growth even though PR #3
+              differs from its immutable upstream base by only one qualification text file.
+            product_failure: false
           security_code_scanning:
-            shellcheck_SARIF_generation_and_upload_steps: success_so_far
-            codeql_python: running
+            shellcheck_SARIF: success
+            codeql_python: success
             codeql_javascript_typescript: running
-          remaining_jobs: running
-        expected_effect: >-
-          Test exact NVIDIA upstream code with the trusted reusable CI actions from the
-          same upstream base SHA, eliminating historical-fork CI incompatibility.
-      npm_install_signal:
-        observed_during_valid_plugin_job: true
-        root_graph:
+          cli_coverage_shards: running
+      raw_npm_install_signal:
+        root_development_graph:
           vulnerabilities_total: 9
           low: 1
           moderate: 2
           high: 6
-        secondary_graph:
+        secondary_development_graph:
           high: 2
-        disposition: provisional_until_reviewed_npm_audit_completes
-    conclusion: exact_upstream_baseline_under_valid_full_CI_with_initial_positive_functional_evidence
+        disposition: not_a_reviewed_production_graph_blocker_because_dedicated_reviewed_npm_audit_passed
+    conclusion: exact_upstream_baseline_has_substantial_positive_CI_evidence_but_is_not_production_qualified
     blockers:
       - explicit_DCO_attestation
-      - reviewed_npm_audit_pending
-      - remaining_build_static_installer_cli_and_codeql_results_pending
+      - CLI_coverage_shards_pending
+      - CodeQL_javascript_typescript_pending
       - GitHub_Code_Quality_feature_not_enabled_for_coverage_upload
-      - target_host_runtime_and_OpenShell_policy_tests_not_yet_qualified
+      - growth_guardrail_requires_PR_aware_or_immutable_base_comparison_context_for_fork_qualification
+      - target_host_runtime_OpenShell_policy_performance_and_recovery_tests_not_yet_qualified
 
   - component: yemanlin1st/opencode
     qualification_pr: 1
@@ -133,7 +168,7 @@ qualification_patterns:
       - create_immutable_base_branch_at_exact_upstream_head
       - create_qualification_head_from_same_SHA
       - add_nonproduction_trigger_commit_to_head_only
-      - open_draft_PR_head_to_immutable_base
+      - open_qualification_PR_head_to_immutable_base
       - collect_evidence
       - never_merge_trigger_PR
     benefit: distinguishes_upstream_runtime_failure_from_historical_fork_CI_incompatibility
@@ -143,7 +178,8 @@ rules:
   - metadata_only_CI_must_not_satisfy_runtime_security_or_performance_gates
   - CI_failure_before_test_execution_must_be_classified_as_harness_or_tooling_failure_not_product_failure
   - downstream_artifact_or_coverage_upload_failure_must_not_erase_successful_underlying_test_evidence
+  - static_growth_guardrails_must_use_the_intended_PR_or_immutable_base_not_historical_fork_main
   - upstream_workflow_trusted_actions_must_match_the_upstream_baseline_under_test
-  - unresolved_dependency_vulnerability_signals_block_security_qualification
+  - raw_development_dependency_audit_output_must_not_override_a_passed_reviewed_production_graph_audit_without_dependency_level_evidence
   - DCO_or_other_legal_attestations_require_authorized_human_action
   - no_component_is_promoted_without_reproducible_runtime_evidence
