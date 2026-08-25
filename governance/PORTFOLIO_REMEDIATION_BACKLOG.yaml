@@ -1,0 +1,101 @@
+version: 1.0
+name: PEFY Portfolio Remediation Backlog
+updated: 2026-08-25
+
+items:
+  - id: CP-001
+    priority: P0
+    component: PEFY sovereign control plane
+    issue: PEFY governance currently resides partly inside external forks
+    action: create_private_authoritative_control_plane_and_migrate_governance_assets
+    state: BLOCKED_EXTERNAL_ACTION
+    blocker: current_GitHub_connector_does_not_expose_repository_creation
+    exit_criteria:
+      - private_repository_exists
+      - access_and_branch_protection_configured
+      - governance_assets_migrated_with_provenance
+      - runtime_adapters_validated
+
+  - id: COD-001
+    priority: P0
+    component: yemanlin1st/codex
+    upstream: openai/codex
+    state: U3
+    drift: {ahead: 16, behind: 9661}
+    action: extract_pefy_overlay_then_rebase_code_integration_on_current_upstream
+    qualification_pr: 1
+    rollback: pefy-delta/2026-06-16
+    blocker: no_CI_evidence_yet
+
+  - id: OCL-001
+    priority: P0
+    component: yemanlin1st/openclaw
+    upstream: openclaw/openclaw
+    state: U1
+    drift: {ahead: 0, behind: 57141}
+    action: migration_with_license_runtime_schema_plugin_and_data_review
+    qualification_pr: 1
+    rollback: rollback/2026-04-03
+    blockers:
+      - local_vs_upstream_license_metadata_conflict
+      - no_CI_evidence_yet
+
+  - id: OCO-001
+    priority: P1
+    component: yemanlin1st/opencode
+    upstream: anomalyco/opencode
+    state: U1
+    drift: {ahead: 0, behind: 5277}
+    action: qualify_major_upstream_migration
+    qualification_pr: 1
+    rollback: rollback/2026-03-15
+    blocker: no_CI_evidence_yet
+
+  - id: N8N-001
+    priority: P1
+    component: yemanlin1st/n8n
+    upstream: n8n-io/n8n
+    state: U1
+    drift: {ahead: 0, behind: 7640}
+    action: qualify_database_workflow_credentials_worker_webhook_and_runtime_migration
+
+  - id: DFR-001
+    priority: P1
+    component: yemanlin1st/deer-flow
+    upstream: bytedance/deer-flow
+    state: U1
+    drift: {ahead: 0, behind: 1353}
+    action: qualify_migration_and_preserve_pefy_orchestration_adapter
+
+  - id: CRA-001
+    priority: P1
+    component: yemanlin1st/crewAI
+    upstream: crewAIInc/crewAI
+    state: U1
+    drift: {ahead: 0, behind: 543}
+    action: qualify_sync_through_existing_draft_pr
+
+  - id: DSH-001
+    priority: P1
+    component: DeepSeek_Harness_skill
+    upstream: deepseek-ai/deepseek-harness
+    state: EXPERIMENTAL
+    action: pin_tested_sdk_and_runtime_versions_before_production_like_use
+    blockers:
+      - developer_preview
+      - runtime_not_deployed_or_qualified_on_target_host
+
+  - id: DFL-001
+    priority: P3
+    component: yemanlin1st/DeepFlow
+    upstream: DeepFlowcc/DeepFlow
+    state: U0
+    drift: {ahead: 0, behind: 0}
+    action: monitor_dormancy_license_and_successor_risk
+
+portfolio_rules:
+  - process_P0_before_P1_unless_dependency_order_requires_otherwise
+  - never_merge_migration_PR_without_release_qualification_matrix
+  - extract_PE​​FY_owned_governance_from_external_forks_before_destructive_sync
+  - preserve_rollback_for_every_U1_U3_migration
+  - close_or_downgrade_items_only_with_evidence
