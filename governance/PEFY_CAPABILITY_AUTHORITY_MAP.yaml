@@ -1,4 +1,4 @@
-version: 1.0
+version: 1.1
 name: PEFY Capability Authority Map
 purpose: >-
   Prevent duplicate orchestration, uncontrolled framework proliferation and ambiguous
@@ -29,6 +29,7 @@ authority_tiers:
     components:
       - council_fabric
       - counsellors
+      - AGENT_MANAGER
       - red_team_review
       - security_privacy_review
       - compliance_ip_review
@@ -36,13 +37,41 @@ authority_tiers:
       - independent_verifiers
     authority:
       - challenge
+      - capability_admission_and_lifecycle_review
       - block_on_defined_gates
+      - quarantine_or_downgrade_subordinate_capabilities
       - validate
       - record_dissent
-    rule: advisory_or_gatekeeping_not_parallel_execution_orchestration
+    rules:
+      - advisory_or_gatekeeping_not_parallel_sovereign_orchestration
+      - Agent_Manager_is_mandatory_for_material_agent_tool_skill_harness_or_runtime_admission
+      - Agent_Manager_cannot_fabricate_or_bypass_human_legal_security_or_production_approval
+
+  A2_5_DELIVERY_OFFICE:
+    components:
+      - PEFY_OFFICE_AGENCY_Ω
+    authority:
+      - project_intake_and_classification
+      - minimum_competent_team_staffing
+      - work_graph_and_handoff_coordination
+      - project_scoped_memory_coordination
+      - evidence_collection_coordination
+      - resource_budget_and_backpressure_enforcement
+      - incident_and_release_cell_assembly
+    prohibited:
+      - sovereign_policy_override
+      - capability_admission_without_Agent_Manager
+      - permanent_unbounded_agent_spawning
+      - secret_ownership
+      - production_promotion_without_A1_A2_and_human_gates
+    rules:
+      - one_project_namespace_per_project_or_explicitly_authorized_shared_domain
+      - activate_only_the_minimum_competent_team
+      - use_project_adapter_contract
+      - all_execution_adapters_remain_replaceable
 
   A3_EXECUTION_RUNTIMES:
-    rule: selected_by_A1_policy_per_task
+    rule: selected_by_A1_policy_per_task_and_admitted_by_Agent_Manager
     families:
       coding_agents:
         primary_candidates:
@@ -64,6 +93,7 @@ authority_tiers:
           - use_only_when_task_benefits_from_role_parallelism_or_decomposition
           - never_nest_multi_agent_frameworks_by_default
           - no_framework_may_override_A1_governance
+          - Office_Agency_staffing_does_not_require_a_multi_agent_framework_if_native_agents_suffice
       workflow_automation:
         candidates:
           - n8n
@@ -106,9 +136,14 @@ authority_tiers:
       - search_retrieval_tools
       - vector_indexes
       - skill_packages
+      - office_runtime_adapters
+      - project_adapters
     rule: capability_only_no_independent_governance_authority
 
   A5_DISCOVERY_REFERENCE:
+    named_references:
+      - munder_difflin
+      - agency_agents
     patterns:
       - awesome_*
       - '*-guide'
@@ -124,10 +159,17 @@ authority_tiers:
       - never_auto_install
       - never_auto_execute
       - provenance_review_before_import
-      - copy_only_minimum_qualified_capability
+      - copy_only_minimum_qualified_capability_or_reimplement_cleanly
       - preserve_license_and_attribution
+      - external_office_or_agent_catalogs_do_not_define_PEFY_authority
 
 routing_policy:
+  project_office_staffing:
+    control: PEFY_OFFICE_AGENCY_Ω
+    lifecycle_gate: AGENT_MANAGER
+    project_contract: PEFY_PROJECT_ADAPTER
+    rule: staff_minimum_competent_cross_functional_cell_then_route_each_execution_stage_to_A3_or_A4
+
   software_engineering:
     choose_from: [codex, claude_code, opencode, deepseek_harness]
     selection_metrics:
@@ -175,10 +217,13 @@ resource_governor:
     - use_smallest_capable_model_for_routine_steps
     - escalate_model_or_framework_only_on_measured_need
     - cache_stable_read_only_results_with_explicit_invalidation
+    - apply_backpressure_before_spawning_more_workers
     - never_trade_security_or_correctness_for_memory_reduction
 
 state_separation:
   sovereign_policy_state: A1_only
+  capability_lifecycle_state: Agent_Manager_and_governed_registry
+  office_staffing_and_task_state: project_scoped_Office_Agency
   execution_session_state: runtime_specific
   durable_workflow_state: workflow_engine
   secrets: approved_secret_manager_only
@@ -198,7 +243,8 @@ anti_duplication_decision:
 
 promotion_rules:
   - no_A5_component_promotes_directly_to_A3
-  - every_A3_runtime_requires_owner_version_update_policy_security_tier_and_benchmark
+  - every_A3_runtime_requires_Agent_Manager_admission_owner_version_update_policy_security_tier_and_benchmark
   - every_new_framework_must_show_capability_gap_not_already_covered
   - overlapping_frameworks_require_comparative_benchmark_before_both_remain_active
-  - production_default_change_requires_release_qualification_matrix
+  - external_office_frameworks_cannot_replace_PEFY_OFFICE_AGENCY_Ω_without_A1_architecture_decision
+  - production_default_change_requires_release_qualification_matrix_and_PEFY_PRODUCTION_READINESS_GATE
