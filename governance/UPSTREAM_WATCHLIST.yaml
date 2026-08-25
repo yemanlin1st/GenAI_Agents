@@ -1,0 +1,74 @@
+version: 1.0
+name: PEFY-Upstream-Watchlist
+auto_discovery:
+  enabled: true
+  scope: accessible_owned_repositories
+  include_forks: true
+  classify_divergence: [U0_CLEAN, U1_BEHIND_ONLY, U2_AHEAD_ONLY, U3_DIVERGED, U4_ORPHANED_ARCHIVED_MOVED]
+
+critical_upstreams:
+  - component: DeepSeek Harness
+    upstream: deepseek-ai/deepseek-harness
+    local_integration: yemanlin1st/GenAI_Agents:skills/deepseek-harness
+    tracking_mode: repository_commits_tags_manifests_security
+    maturity: developer_preview
+    license: MIT
+    policy:
+      version_pin_before_production_like_use: true
+      sandbox_validation: true
+      rollback_required: true
+      trajectory_privacy_review: true
+
+  - component: CrewAI
+    local_repository: yemanlin1st/crewAI
+    upstream: crewAIInc/crewAI
+    default_branch: main
+    verified_state_2026_08_25:
+      divergence: U1_BEHIND_ONLY
+      ahead_by: 0
+      behind_by: 543
+    treatment: controlled_sync_candidate
+
+  - component: DeerFlow
+    local_repository: yemanlin1st/deer-flow
+    upstream: bytedance/deer-flow
+    default_branch: main
+    verified_state_2026_08_25:
+      divergence: U1_BEHIND_ONLY
+      ahead_by: 0
+      behind_by: 1353
+    treatment: migration_scale_sync
+
+  - component: n8n
+    local_repository: yemanlin1st/n8n
+    upstream: n8n-io/n8n
+    default_branch: master
+    verified_state_2026_08_25:
+      divergence: U1_BEHIND_ONLY
+      ahead_by: 0
+      behind_by: 7640
+    treatment: migration_scale_sync
+    special_checks: [license, runtime_requirements, database_migrations, workflow_compatibility, credentials, community_nodes]
+
+monitor_signals:
+  - releases
+  - tags
+  - default_branch_commits
+  - security_advisories
+  - cves
+  - breaking_changes
+  - deprecations
+  - license_changes
+  - runtime_requirements
+  - schema_migrations
+  - plugin_api_changes
+  - performance_fixes
+  - upstream_archive_or_transfer
+  - fork_ahead_behind_drift
+
+change_rules:
+  - never_auto_merge_major_change
+  - never_force_push_unclassified_local_work
+  - preserve_local_pefy_ip
+  - prefer_backport_for_critical_security_when_full_convergence_blocked
+  - require_tests_benchmarks_security_and_rollback_before_promotion
