@@ -1,4 +1,4 @@
-version: 1.0
+version: 1.1
 name: PEFY Portfolio Remediation Backlog
 updated: 2026-08-25
 
@@ -15,6 +15,19 @@ items:
       - access_and_branch_protection_configured
       - governance_assets_migrated_with_provenance
       - runtime_adapters_validated
+
+  - id: CI-001
+    priority: P0
+    component: upstream_drift_audit_workflow
+    state: CONFIGURED_NOT_RUNTIME_QUALIFIED
+    action: enable_or_restore_GitHub_Actions_execution_then_collect_compile_audit_and_artifact_evidence
+    evidence:
+      - workflow_paths_corrected
+      - audit_script_implemented
+      - multiple_matching_push_commits_produced_zero_workflow_runs
+    blockers:
+      - no_GitHub_Actions_run_for_branch_commits
+      - no_runtime_compile_or_API_execution_evidence_from_CI
 
   - id: COD-001
     priority: P0
@@ -39,6 +52,19 @@ items:
     blockers:
       - local_vs_upstream_license_metadata_conflict
       - no_CI_evidence_yet
+
+  - id: NEMO-001
+    priority: P0
+    component: PEFY-TECH/NemoClaw
+    upstream: NVIDIA/NemoClaw
+    state: U1
+    drift: {ahead: 0, behind: 4757}
+    action: qualify_organization_level_migration_then_propagate_verified_commit_to_secondary_forks
+    qualification_pr: 1
+    rollback: rollback/2026-03-18
+    blockers:
+      - no_CI_evidence_yet
+      - migration_scale_runtime_and_policy_boundary_change
 
   - id: OCO-001
     priority: P1
@@ -67,6 +93,17 @@ items:
     drift: {ahead: 0, behind: 1353}
     action: qualify_migration_and_preserve_pefy_orchestration_adapter
 
+  - id: MGP-001
+    priority: P1
+    component: yemanlin1st/MetaGPT-x
+    upstream: FoundationAgents/MetaGPT
+    state: U1
+    drift: {ahead: 0, behind: 1495}
+    action: qualify_migration_against_canonical_source_not_intermediate_fork
+    qualification_pr: 1
+    rollback: rollback/2024-11-11
+    blocker: no_CI_evidence_yet
+
   - id: CRA-001
     priority: P1
     component: yemanlin1st/crewAI
@@ -74,6 +111,19 @@ items:
     state: U1
     drift: {ahead: 0, behind: 543}
     action: qualify_sync_through_existing_draft_pr
+
+  - id: CLC-001
+    priority: P1
+    component: yemanlin1st/claude-code
+    upstream: anthropics/claude-code
+    state: U1
+    drift: {ahead: 0, behind: 170}
+    action: bounded_qualification_then_sync
+    qualification_pr: 1
+    rollback: rollback/2026-03-28
+    blockers:
+      - no_CI_evidence_yet
+      - repository_license_metadata_unknown
 
   - id: DSH-001
     priority: P1
@@ -84,6 +134,26 @@ items:
     blockers:
       - developer_preview
       - runtime_not_deployed_or_qualified_on_target_host
+
+  - id: CLAUDE-CATALOG-001
+    priority: P2
+    component: claude_related_guides_catalogs_templates_and_marketplaces
+    state: DISCOVERY_ONLY
+    action: consolidate_capability_index_and_prevent_automatic_runtime_installation
+    rationale: multiple_overlapping_public_reference_repositories_detected
+    exit_criteria:
+      - each_reference_repo_classified
+      - duplicate_runtime_content_not_auto_installed
+      - qualified_capabilities_imported_individually_with_provenance
+
+  - id: NEMO-002
+    priority: P2
+    component: yemanlin1st/NemoClaw
+    upstream: PEFY-TECH/NemoClaw
+    state: U0_TO_PARENT
+    drift: {ahead: 0, behind: 0}
+    inherited_canonical_drift: 4757
+    action: wait_for_NEMO_001_then_propagate_exact_qualified_commit
 
   - id: DFL-001
     priority: P3
@@ -96,6 +166,8 @@ items:
 portfolio_rules:
   - process_P0_before_P1_unless_dependency_order_requires_otherwise
   - never_merge_migration_PR_without_release_qualification_matrix
-  - extract_PE​​FY_owned_governance_from_external_forks_before_destructive_sync
+  - extract_PEFY_owned_governance_from_external_forks_before_destructive_sync
   - preserve_rollback_for_every_U1_U3_migration
+  - remediate_multi_hop_forks_at_the_authoritative_layer_first
+  - discovery_catalogs_are_never_automatic_runtime_dependencies
   - close_or_downgrade_items_only_with_evidence
