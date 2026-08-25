@@ -1,4 +1,4 @@
-version: 1.0
+version: 1.1
 purpose: >-
   Registry for preserving intentional PEFY deltas from externally-derived repositories.
   Entries are evidence records, not automatic upgrade permissions.
@@ -22,21 +22,89 @@ entries:
   - repository: yemanlin1st/crewAI
     upstream: crewAIInc/crewAI
     state: U1
+    ahead_by: 0
+    behind_by: 543
     remediation: qualify_then_fast_forward_or_migrate
     local_delta_policy: preserve_if_detected_before_promotion
     priority: P1
+
   - repository: yemanlin1st/deer-flow
     upstream: bytedance/deer-flow
     state: U1
+    ahead_by: 0
+    behind_by: 1353
     remediation: migration_scale_qualification
     local_delta_policy: preserve_if_detected_before_promotion
     priority: P1
+
   - repository: yemanlin1st/n8n
     upstream: n8n-io/n8n
     state: U1
+    ahead_by: 0
+    behind_by: 7640
     remediation: major_migration_scale_qualification
     local_delta_policy: preserve_workflows_credentials_schema_and_runtime_compatibility
     priority: P1
+
+  - repository: yemanlin1st/openclaw
+    upstream: openclaw/openclaw
+    state: U1
+    local_head: 316978700e24f7f14aab6b07fbbcaddd4dafe949
+    upstream_head: b9d522738d5e087c1783e38eb1401eebcabc40de
+    ahead_by: 0
+    behind_by: 57141
+    license_local: MIT
+    license_upstream: NOASSERTION
+    remediation: extreme_migration_scale_with_license_runtime_schema_plugin_and_data_review
+    local_delta_policy: no_local_commits_detected_but_preserve_runtime_configuration_and_user_data_externally
+    qualification_branch: upstream-sync/2026-08-25
+    rollback_ref: rollback/2026-04-03
+    priority: P0
+
+  - repository: yemanlin1st/opencode
+    upstream: anomalyco/opencode
+    state: U1
+    local_head: 9c006699275a1d2affd9ddb711afc0384e303379
+    upstream_head: 69aaa22793bcbe0b016ad9cfad22616906766df0
+    ahead_by: 0
+    behind_by: 5277
+    license_local: MIT
+    license_upstream: MIT
+    remediation: major_migration_scale_qualification
+    local_delta_policy: no_local_commits_detected_preserve_external_configuration_and_provider_routing
+    qualification_branch: upstream-sync/2026-08-25
+    rollback_ref: rollback/2026-03-15
+    priority: P1
+
+  - repository: yemanlin1st/codex
+    upstream: openai/codex
+    state: U3
+    local_head: 3ef0725471996675a5f9af766af39b904e2196cf
+    upstream_head: d52478c52ef09f001142a4b82339467c3880877f
+    ahead_by: 16
+    behind_by: 9661
+    license_local: Apache-2.0
+    license_upstream: Apache-2.0
+    remediation: separate_pefy_overlay_then_rebase_or_reapply_on_current_upstream
+    local_delta_policy: preserve_pea_governance_mcp_security_and_account_control_content_as_owned_overlay
+    conflict_classes: [C1, C2, C3, C4, C5]
+    qualification_branch: upstream-sync/2026-08-25
+    rollback_ref: pefy-delta/2026-06-16
+    priority: P0
+
+  - repository: yemanlin1st/DeepFlow
+    upstream: DeepFlowcc/DeepFlow
+    state: U0
+    local_head: 92a3ed17ccf54b91216e3f669eaf2ff396eaf68b
+    upstream_head: 92a3ed17ccf54b91216e3f669eaf2ff396eaf68b
+    ahead_by: 0
+    behind_by: 0
+    license_local: GPL-3.0
+    license_upstream: GPL-3.0
+    remediation: no_sync_required_monitor_dormancy_and_successor_risk
+    local_delta_policy: none_detected
+    priority: P3
+
   - repository: yemanlin1st/GenAI_Agents
     upstream: NirDiamant/GenAI_Agents
     state: unknown_recheck_required
