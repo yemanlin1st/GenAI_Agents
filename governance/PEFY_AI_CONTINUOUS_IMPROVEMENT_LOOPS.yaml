@@ -1,0 +1,90 @@
+version: 1.0
+name: PEFY-AI-Continuous-Improvement-Loops
+authority:
+  principal: final_decision
+  pea: sovereign_orchestrator
+  councils: deliberate_and_challenge
+  counsellors: specialist_advice
+  agents: scoped_execution
+  verifiers: independent_validation
+  change_control: promotion_and_rollback
+
+principles:
+  - inventory_before_change
+  - improve_before_duplicate
+  - least_privilege
+  - evidence_before_claim
+  - human_approval_for_high_impact
+  - sandbox_before_promotion
+  - version_pin_unstable_components
+  - preserve_rollback
+  - secrets_never_in_code_prompts_or_trajectories
+  - interoperability_over_parallel_stacks
+
+loops:
+  L0_INVENTORY:
+    objective: discover_and_classify_all_accessible_components
+    outputs: [capability_graph, dependency_inventory, lifecycle_state, ownership_map, evidence_map]
+  L1_CLEAN:
+    objective: remove_drift_duplication_stale_configuration_and_dead_dependencies
+    requires: [evidence, impact_analysis]
+  L2_DEFEND:
+    objective: continuously_reduce_security_privacy_and_supply_chain_risk
+    gates: [secrets, sast, dependency, sbom, iac, container, access_control, sandbox, provenance]
+  L3_ALIGN:
+    objective: enforce_architectural_coherence_and_interoperability
+    rule: metapefyon_and_metaflow_remain_supervisory_control_plane
+  L4_OPTIMIZE:
+    objective: improve_measurable_efficiency
+    metrics: [latency, throughput, memory, cpu_gpu, storage, token_cost, api_cost, concurrency, retry_rate, recovery_time]
+  L5_WATCH:
+    objective: detect_actionable_upstream_change
+    signals: [releases, tags, manifests, commits, advisories, cves, deprecations, breaking_changes, license_changes, performance_fixes]
+    upgrade_policy: assess_test_benchmark_approve_then_promote
+  L6_GOVERN:
+    objective: maintain_change_documentation_compliance_ip_and_audit_controls
+  L7_PROVE:
+    objective: independently_validate_every_promoted_change
+    evidence: [tests, security_results, compatibility, benchmarks, rollback, documentation]
+  L8_LEARN:
+    objective: update_routing_risk_rules_tests_and_technical_debt_from_outcomes
+
+priority:
+  P0: exploitable_security_data_loss_outage_credentials
+  P1: severe_reliability_breaking_change_critical_compliance_major_regression
+  P2: meaningful_performance_maintainability_observability_interoperability_update
+  P3: optional_capability_ux_experiment_cleanup
+
+promotion_gates:
+  - verified_upstream_authenticity
+  - impact_analysis_complete
+  - no_unmitigated_critical_security_finding
+  - isolated_validation_complete
+  - regression_tests_pass
+  - interoperability_tests_pass
+  - performance_baseline_not_unacceptably_regressed
+  - documentation_updated
+  - rollback_available
+  - approval_recorded_when_required
+
+stop_conditions:
+  - unknown_ownership_for_high_impact_change
+  - incompatible_or_unclear_license
+  - critical_secret_exposure
+  - critical_unmitigated_vulnerability
+  - destructive_action_without_approval
+  - production_claim_without_live_evidence
+  - mass_install_without_project_local_qualification
+
+report_contract:
+  - inventory_delta
+  - findings_by_severity
+  - councils_and_dissent
+  - corrections
+  - candidate_updates
+  - security_compatibility
+  - measured_impact
+  - evidence
+  - rollback
+  - blockers
+  - next_actions
