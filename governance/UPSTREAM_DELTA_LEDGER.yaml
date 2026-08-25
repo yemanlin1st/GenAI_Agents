@@ -1,4 +1,4 @@
-version: 1.4
+version: 1.5
 purpose: >-
   Registry for preserving intentional PEFY deltas from externally-derived repositories.
   Entries are evidence records, not automatic upgrade permissions. Multi-hop fork
@@ -23,19 +23,50 @@ entries:
   - repository: yemanlin1st/crewAI
     upstream: crewAIInc/crewAI
     state: U1
+    local_head: fc6792d0678fb6c80a81b13289b09ae01a29a3fd
+    upstream_head: 4e0b2e2b157ab509fc0221826a09661dc87aa2bf
     ahead_by: 0
     behind_by: 543
-    remediation: qualify_then_fast_forward_or_migrate
-    local_delta_policy: preserve_if_detected_before_promotion
+    runtime_delta:
+      python: ">=3.10,<3.14 unchanged"
+    material_upstream_improvements:
+      - task_failure_telemetry_no_longer_reported_as_success
+      - sensitive_free_form_error_text_avoided_in_error_type_telemetry
+      - task_failure_checkpoint_serialization_and_restore_hardened
+      - producer_level_regression_tests_added
+      - pip_audit_and_broader_security_quality_tooling_added
+    remediation: qualify_current_upstream_with_observability_security_and_multi_agent_regression_gates
+    local_delta_policy: none_detected_preserve_pefy_orchestration_and_policy_as_external_adapter
+    qualification_branch: upstream-sync/2026-08-25
+    rollback_ref: rollback/2026-04-10
+    qualification_pr: 2
+    superseded_pr: 1
     priority: P1
 
   - repository: yemanlin1st/deer-flow
     upstream: bytedance/deer-flow
     state: U1
+    local_head: ac97dc6d426c92efeefa018cea4471c0bbd6834f
+    upstream_head: 431892e16abff5f11c50be37eeb0699af958896f
     ahead_by: 0
     behind_by: 1353
-    remediation: migration_scale_qualification
-    local_delta_policy: preserve_if_detected_before_promotion
+    local_version: 0.1.0
+    upstream_generation: 2.1.0
+    runtime_delta:
+      python: ">=3.12 unchanged"
+    architecture_delta:
+      - dedicated_extension_api
+      - expanded_sandbox_and_runtime_options
+      - redis_postgres_browser_and_memory_extras
+      - additional_channels
+      - bcrypt_jwt_and_email_validation
+      - stricter_security_relevant_dependency_bounds
+      - read_only_RAGFlow_retrieval_with_dataset_scope_hardening
+    remediation: architecture_migration_with_extension_security_knowledge_and_state_qualification
+    local_delta_policy: none_detected_keep_pefy_sovereign_orchestration_knowledge_policy_and_vector_authority_external
+    qualification_branch: upstream-sync/2026-08-25
+    rollback_ref: rollback/2026-03-25
+    qualification_pr: 2
     priority: P1
 
   - repository: yemanlin1st/n8n
@@ -222,6 +253,8 @@ entry_schema:
     - local_version
     - upstream_generation
     - source_type
+    - material_upstream_improvements
+    - architecture_delta
     - inherited_canonical_drift
     - license_local
     - license_upstream
@@ -237,6 +270,7 @@ entry_schema:
     - prior_qualification_branch
     - rollback_ref
     - qualification_pr
+    - superseded_pr
     - evidence
     - owner
     - next_review
