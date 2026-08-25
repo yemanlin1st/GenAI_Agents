@@ -1,11 +1,14 @@
 #!/usr/bin/env python3
 """Read-only upstream drift and release intelligence auditor for PEFY repositories.
 
-Uses only the Python standard library. It never mutates repositories.
+The auditor is intentionally non-mutating. It inventories repository lineage,
+release/tag signals, branch heads, license metadata and fork drift so that a
+separate governed change process can decide whether to synchronize, migrate,
+backport, preserve a PEFY delta, or take no action.
 
 Token precedence:
-1. PEFY_PORTFOLIO_TOKEN - recommended for explicitly authorized portfolio/private access.
-2. GITHUB_TOKEN - useful in GitHub Actions for the current repository and public data.
+1. PEFY_PORTFOLIO_TOKEN - explicitly authorized portfolio/private access.
+2. GITHUB_TOKEN - GitHub Actions token; usually current repo + public data.
 3. no token - public GitHub API with lower rate limits.
 """
 
@@ -23,7 +26,8 @@ import urllib.request
 from typing import Any
 
 API = "https://api.github.com"
-USER_AGENT = "PEFY-Upstream-Audit/1.0"
+USER_AGENT = "PEFY-Upstream-Audit/1.1"
+_CACHE: dict[str, Any] = {}
 
 
 def token() -> str | None:
@@ -32,6 +36,9 @@ def token() -> str | None:
 
 def request_json(path_or_url: str, *, allow_404: bool = False) -> Any:
     url = path_or_url if path_or_url.startswith("https://") else f"{API}{path_or_url}"
+    if url in _CACHE:
+        return _CACHE[url]
+
     headers = {
         "Accept": "application/vnd.github+json",
         "X-GitHub-Api-Version": "2022-11-28",
@@ -40,12 +47,16 @@ def request_json(path_or_url: str, *, allow_404: bool = False) -> Any:
     tok = token()
     if tok:
         headers["Authorization"] = f"Bearer {tok}"
+
     req = urllib.request.Request(url, headers=headers)
     try:
         with urllib.request.urlopen(req, timeout=30) as response:
-            return json.loads(response.read().decode("utf-8"))
+            data = json.loads(response.read().decode("utf-8"))
+            _CACHE[url] = data
+            return data
     except urllib.error.HTTPError as exc:
         if allow_404 and exc.code == 404:
+            _CACHE[url] = None
             return None
         body = exc.read().decode("utf-8", errors="replace")[:500]
         raise RuntimeError(f"GitHub API {exc.code} for {url}: {body}") from exc
@@ -67,6 +78,28 @@ def license_id(meta: dict[str, Any] | None) -> str | None:
         return None
     lic = meta.get("license") or {}
     return lic.get("spdx_id") or lic.get("key")
+
+
+def embedded_full_name(value: Any) -> str | None:
+    return value.get("full_name") if isinstance(value, dict) else None
+
+
+def branch_head(repo: str, branch: str) -> str | None:
+    commit = request_json(
+        f"/repos/{repo}/commits/{urllib.parse.quote(branch, safe='')}",
+        allow_404=True,
+    )
+    return commit.get("sha") if isinstance(commit, dict) else None
+
+
+def latest_signal(repo: str) -> dict[str, Any]:
+    release = request_json(f"/repos/{repo}/releases/latest", allow_404=True)
+    tags = request_json(f"/repos/{repo}/tags?per_page=1", allow_404=True) or []
+    return {
+        "latest_release": release.get("tag_name") if release else None,
+        "latest_release_published_at": release.get("published_at") if release else None,
+        "latest_tag": tags[0].get("name") if tags else None,
+    }
 
 
 def state_from_compare(compare: dict[str, Any] | None, upstream_meta: dict[str, Any] | None) -> str:
@@ -101,16 +134,6 @@ def drift_scale(behind: int) -> str:
     return "extreme-migration-scale"
 
 
-def latest_signal(repo: str) -> dict[str, Any]:
-    release = request_json(f"/repos/{repo}/releases/latest", allow_404=True)
-    tags = request_json(f"/repos/{repo}/tags?per_page=1", allow_404=True) or []
-    return {
-        "latest_release": release.get("tag_name") if release else None,
-        "latest_release_published_at": release.get("published_at") if release else None,
-        "latest_tag": tags[0].get("name") if tags else None,
-    }
-
-
 def compare_fork(local_meta: dict[str, Any], upstream_meta: dict[str, Any]) -> dict[str, Any] | None:
     local_full = local_meta["full_name"]
     local_owner = local_meta["owner"]["login"]
@@ -121,7 +144,11 @@ def compare_fork(local_meta: dict[str, Any], upstream_meta: dict[str, Any]) -> d
     if local_full == upstream_full:
         return None
 
-    spec = f"{urllib.parse.quote(upstream_branch, safe='')}...{urllib.parse.quote(local_owner, safe='')}:{urllib.parse.quote(local_branch, safe='')}"
+    spec = (
+        f"{urllib.parse.quote(upstream_branch, safe='')}"
+        f"...{urllib.parse.quote(local_owner, safe='')}:"
+        f"{urllib.parse.quote(local_branch, safe='')}"
+    )
     return request_json(f"/repos/{upstream_full}/compare/{spec}", allow_404=True)
 
 
@@ -133,15 +160,24 @@ def audit_entry(entry: dict[str, Any]) -> dict[str, Any]:
         "checked_at": dt.datetime.now(dt.timezone.utc).isoformat(),
         "upstream_only": bool(entry.get("upstream_only")),
     }
+
     try:
         local = request_json(f"/repos/{repo}")
+        local_branch = local.get("default_branch")
+        parent = embedded_full_name(local.get("parent"))
+        canonical_source = embedded_full_name(local.get("source"))
+
         result.update(
             {
                 "visibility": local.get("visibility"),
-                "default_branch": local.get("default_branch"),
+                "default_branch": local_branch,
+                "local_head": branch_head(repo, local_branch) if local_branch else None,
                 "local_pushed_at": local.get("pushed_at"),
                 "local_license": license_id(local),
                 "local_archived": bool(local.get("archived")),
+                "fork_parent": parent,
+                "canonical_source": canonical_source,
+                "intermediate_fork": bool(parent and canonical_source and parent != canonical_source),
             }
         )
         result.update(latest_signal(repo))
@@ -151,27 +187,29 @@ def audit_entry(entry: dict[str, Any]) -> dict[str, Any]:
                 {
                     "upstream": repo,
                     "state": "UPSTREAM_ONLY",
+                    "upstream_head": result.get("local_head"),
                     "upstream_pushed_at": local.get("pushed_at"),
                     "upstream_dormancy_days": iso_age_days(local.get("pushed_at")),
                     "upstream_license": license_id(local),
+                    "license_delta": False,
                 }
             )
             return result
 
-        upstream_ref = entry.get("upstream")
-        if not upstream_ref and local.get("fork"):
-            parent = local.get("parent") or local.get("source")
-            upstream_ref = parent.get("full_name") if parent else None
-
+        # Explicit watchlist upstream wins. Otherwise use the immediate parent,
+        # preserving canonical_source separately so multi-hop fork chains stay visible.
+        upstream_ref = entry.get("upstream") or parent or canonical_source
         if not upstream_ref:
             result.update({"state": "NO_UPSTREAM", "upstream": None})
             return result
 
         upstream = request_json(f"/repos/{upstream_ref}")
+        upstream_branch = upstream.get("default_branch")
         result.update(
             {
                 "upstream": upstream_ref,
-                "upstream_default_branch": upstream.get("default_branch"),
+                "upstream_default_branch": upstream_branch,
+                "upstream_head": branch_head(upstream_ref, upstream_branch) if upstream_branch else None,
                 "upstream_pushed_at": upstream.get("pushed_at"),
                 "upstream_dormancy_days": iso_age_days(upstream.get("pushed_at")),
                 "upstream_license": license_id(upstream),
@@ -193,8 +231,6 @@ def audit_entry(entry: dict[str, Any]) -> dict[str, Any]:
                     "behind_by": behind,
                     "drift_scale": drift_scale(behind),
                     "merge_base": (compare.get("merge_base_commit") or {}).get("sha"),
-                    "local_head": (compare.get("head_commit") or {}).get("sha"),
-                    "upstream_head": (compare.get("base_commit") or {}).get("sha"),
                 }
             )
         else:
@@ -204,16 +240,27 @@ def audit_entry(entry: dict[str, Any]) -> dict[str, Any]:
         upstream_lic = result.get("upstream_license")
         result["license_delta"] = bool(local_lic and upstream_lic and local_lic != upstream_lic)
         return result
-    except Exception as exc:  # noqa: BLE001 - evidence collector must continue portfolio run
+
+    except Exception as exc:  # evidence collection must continue across the portfolio
         result["state"] = "ERROR"
         result["error"] = str(exc)
         return result
 
 
 def severity_key(row: dict[str, Any]) -> tuple[int, int]:
-    p = {"P0": 0, "P1": 1, "P2": 2, "P3": 3}.get(row.get("priority"), 9)
-    state = {"ERROR": 0, "U4": 1, "U3": 2, "U1": 3, "U2": 4, "UNKNOWN": 5, "NO_UPSTREAM": 6, "U0": 7, "UPSTREAM_ONLY": 8}.get(row.get("state"), 9)
-    return p, state
+    priority_order = {"P0": 0, "P1": 1, "P2": 2, "P3": 3}
+    state_order = {
+        "ERROR": 0,
+        "U4": 1,
+        "U3": 2,
+        "U1": 3,
+        "U2": 4,
+        "UNKNOWN": 5,
+        "NO_UPSTREAM": 6,
+        "U0": 7,
+        "UPSTREAM_ONLY": 8,
+    }
+    return priority_order.get(row.get("priority"), 9), state_order.get(row.get("state"), 9)
 
 
 def recommendation(row: dict[str, Any]) -> str:
@@ -245,14 +292,15 @@ def render_markdown(rows: list[dict[str, Any]]) -> str:
         "",
         f"Generated: {dt.datetime.now(dt.timezone.utc).isoformat()}",
         "",
-        "| Priority | Repository | State | Ahead | Behind | Scale | License delta | Recommendation |",
-        "|---|---|---:|---:|---:|---|---|---|",
+        "| Priority | Repository | Upstream | State | Ahead | Behind | Scale | License delta | Recommendation |",
+        "|---|---|---|---:|---:|---:|---|---|---|",
     ]
     for row in sorted(rows, key=severity_key):
         lines.append(
-            "| {priority} | {repository} | {state} | {ahead} | {behind} | {scale} | {license_delta} | {recommendation} |".format(
+            "| {priority} | {repository} | {upstream} | {state} | {ahead} | {behind} | {scale} | {license_delta} | {recommendation} |".format(
                 priority=row.get("priority", ""),
                 repository=row.get("repository", ""),
+                upstream=row.get("upstream", ""),
                 state=row.get("state", ""),
                 ahead=row.get("ahead_by", ""),
                 behind=row.get("behind_by", ""),
@@ -261,6 +309,15 @@ def render_markdown(rows: list[dict[str, Any]]) -> str:
                 recommendation=recommendation(row).replace("|", "/"),
             )
         )
+
+    multi_hop = [row for row in rows if row.get("intermediate_fork")]
+    if multi_hop:
+        lines.extend(["", "## Multi-hop fork chains", ""])
+        for row in multi_hop:
+            lines.append(
+                f"- {row['repository']}: parent={row.get('fork_parent')}, canonical_source={row.get('canonical_source')}, tracked_upstream={row.get('upstream')}"
+            )
+
     lines.extend(
         [
             "",
@@ -269,6 +326,7 @@ def render_markdown(rows: list[dict[str, Any]]) -> str:
             "- This report is read-only evidence. It is not approval to merge or upgrade.",
             "- U3 requires explicit local-delta preservation.",
             "- License deltas block promotion until reconciled.",
+            "- Multi-hop fork chains must be remediated at the authoritative layer first.",
             "- Developer-preview/upstream-only components remain unqualified until pinned and tested.",
         ]
     )
@@ -288,12 +346,19 @@ def main() -> int:
     out_dir = pathlib.Path(args.out_dir)
     out_dir.mkdir(parents=True, exist_ok=True)
     payload = {
-        "schema_version": "1.0",
+        "schema_version": "1.1",
         "generated_at": dt.datetime.now(dt.timezone.utc).isoformat(),
-        "token_mode": "portfolio" if os.getenv("PEFY_PORTFOLIO_TOKEN") else ("github-actions" if os.getenv("GITHUB_TOKEN") else "anonymous-public"),
+        "token_mode": (
+            "portfolio"
+            if os.getenv("PEFY_PORTFOLIO_TOKEN")
+            else ("github-actions" if os.getenv("GITHUB_TOKEN") else "anonymous-public")
+        ),
         "results": sorted(rows, key=severity_key),
     }
-    (out_dir / "upstream-audit.json").write_text(json.dumps(payload, indent=2, sort_keys=True) + "\n", encoding="utf-8")
+    (out_dir / "upstream-audit.json").write_text(
+        json.dumps(payload, indent=2, sort_keys=True) + "\n",
+        encoding="utf-8",
+    )
     (out_dir / "upstream-audit.md").write_text(render_markdown(rows), encoding="utf-8")
 
     errors = [row for row in rows if row.get("state") == "ERROR"]
