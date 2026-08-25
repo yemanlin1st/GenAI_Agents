@@ -1,0 +1,59 @@
+version: 1.0
+registry_name: PEFY-AI-Capability-Registry
+required_fields:
+  - repository
+  - capability_family
+  - role
+  - authority_level
+  - lifecycle_state
+  - owner
+  - visibility
+  - default_branch
+  - verified_upstream
+  - tracked_version_or_commit
+  - license
+  - local_modifications
+  - primary_dependencies
+  - runtime_environment
+  - security_tier
+  - data_classification
+  - secret_scan_status
+  - dependency_scan_status
+  - test_evidence
+  - performance_baseline
+  - overlap_with
+  - authoritative_for
+  - update_policy
+  - rollback_strategy
+  - last_reviewed
+role_values:
+  - supervisory_control_plane
+  - primary_execution_runtime
+  - specialist_execution_substrate
+  - adapter
+  - project_application
+  - security_tool
+  - observability_tool
+  - infrastructure_tool
+  - model_runtime
+  - skill
+  - knowledge_source
+  - discovery_catalog
+  - training_reference
+  - deprecated
+lifecycle_values:
+  - active
+  - experimental
+  - unqualified
+  - production_qualified
+  - blocked
+  - duplicate_candidate
+  - deprecated
+  - archived_candidate
+rules:
+  - no_component_is_trusted_only_because_it_exists_in_a_catalog
+  - no_duplicate_candidate_is_deleted_without_dependency_and_usage_evidence
+  - production_qualified_requires_current_target_environment_evidence
+  - externally_derived_components_require_verified_upstream_and_license
+  - public_operational_or_proprietary_repositories_require_visibility_review
+  - unstable_upstreams_require_version_pin_and_rollback
