@@ -1,0 +1,56 @@
+version: 1.0
+name: PEFY Release Qualification Matrix
+
+gates:
+  source:
+    - verified_upstream_identity
+    - version_or_commit_pinned
+    - license_reviewed
+    - changelog_or_diff_reviewed
+  security:
+    - secret_scan
+    - dependency_scan
+    - sast_where_applicable
+    - sbom_or_dependency_inventory
+    - container_iac_scan_where_applicable
+    - auth_identity_review_for_security_sensitive_changes
+  compatibility:
+    - runtime_version_supported
+    - api_contracts_checked
+    - schema_migrations_checked
+    - plugin_extension_compatibility_checked
+    - downstream_consumers_checked
+  quality:
+    - unit_tests
+    - integration_tests
+    - e2e_tests_where_relevant
+    - generated_artifacts_reproducible
+  performance:
+    - latency_baseline
+    - memory_baseline
+    - throughput_or_task_success_rate
+    - cost_or_token_delta_where_relevant
+    - no_unaccepted_regression
+  operations:
+    - observability_available
+    - rollback_ref_recorded
+    - backup_restore_or_recovery_checked
+    - runbook_updated
+    - ownership_clear
+  governance:
+    - council_review_complete_for_high_impact_change
+    - material_dissent_recorded
+    - approval_recorded
+    - evidence_retained
+
+outcomes:
+  QUALIFIED: all_required_gates_green
+  CONDITIONAL: noncritical_gap_with_explicit_owner_and_expiry
+  BLOCKED: critical_security_compatibility_license_or_recovery_gap
+  EXPERIMENTAL: sandbox_only_no_production_claim
+
+rules:
+  - developer_preview_components_default_to_EXPERIMENTAL_until_pinned_and_qualified
+  - no_release_is_qualified_from_version_number_alone
+  - no_production_promotion_without_rollback_and_live_target_evidence
+  - critical_security_backports_may_use_reduced_scope_but_not_reduced_verification
