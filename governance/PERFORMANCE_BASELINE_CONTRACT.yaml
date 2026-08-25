@@ -1,0 +1,47 @@
+version: 1.0
+name: PEFY Performance Baseline Contract
+
+metrics:
+  required_when_relevant:
+    - task_success_rate
+    - p50_latency
+    - p95_latency
+    - peak_memory
+    - steady_state_memory
+    - cpu_utilization
+    - gpu_utilization
+    - storage_footprint
+    - startup_time
+    - recovery_time
+    - retries_per_success
+    - tokens_per_success
+    - api_cost_per_success
+  vector_index:
+    - index_size
+    - build_time
+    - query_p50
+    - query_p95
+    - recall_or_relevance_metric
+    - memory_per_million_vectors
+  agentic_runtime:
+    - tool_calls_per_success
+    - failed_tool_calls
+    - loop_iterations
+    - context_growth
+    - session_resume_success
+    - sandbox_start_time
+    - trajectory_storage_growth
+
+comparison:
+  baseline: current_qualified_version
+  candidate: proposed_version_or_patch
+  rules:
+    - compare_same_workload_and_environment
+    - preserve_raw_results_and_test_definition
+    - investigate_regressions_over_accepted_threshold
+    - never_claim_improvement_without_measured_or_explicitly_modeled_evidence
+
+threshold_policy:
+  security_fix: performance_regression_may_be_conditionally_accepted_with_documented_risk_decision
+  routine_upgrade: no_material_regression_without_compensating_benefit
+  optimization_change: must_show_measurable_improvement_on_target_metric_and_no_critical_guardrail_regression

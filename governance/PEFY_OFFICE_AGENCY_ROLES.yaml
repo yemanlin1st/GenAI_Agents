@@ -1,0 +1,199 @@
+version: 1.0
+name: PEFY Office Agency Omega Role Registry
+authority:
+  sovereign_control_plane: METAPEFYON_OMEGA_PEA
+  lifecycle_review_gate: AGENT_MANAGER
+  office_layer: OMEGA_OFFICE
+principles:
+  - minimum_competent_team
+  - least_privilege
+  - separation_of_duties
+  - independent_verification_for_high_impact
+  - evidence_before_promotion
+  - project_scoped_memory
+  - replaceable_execution_adapters
+teams:
+  executive_delivery:
+    activation: project_or_portfolio_coordination
+    roles:
+      - office_director
+      - portfolio_architect
+      - program_manager
+      - project_manager
+      - delivery_manager
+      - pmo_specialist
+      - change_manager
+  product:
+    activation: product_or_service_change
+    roles:
+      - product_manager
+      - product_architect
+      - product_owner
+      - product_analyst
+      - product_operations_manager
+      - production_manager
+      - release_product_manager
+  design:
+    activation: user_facing_or_service_design
+    roles:
+      - product_designer
+      - ux_architect
+      - ui_designer
+      - service_designer
+      - design_system_architect
+      - ux_researcher
+      - accessibility_specialist
+      - content_designer
+  architecture:
+    activation: system_or_integration_change
+    roles:
+      - enterprise_architect
+      - solution_architect
+      - system_architect
+      - software_architect
+      - ai_agentic_architect
+      - data_architect
+      - integration_architect
+      - api_architect
+      - cloud_architect
+      - platform_architect
+      - network_architect
+  software_engineering:
+    activation: software_delivery
+    roles:
+      - frontend_engineer
+      - backend_engineer
+      - fullstack_engineer
+      - mobile_engineer
+      - desktop_engineer
+      - api_engineer
+      - integration_engineer
+      - automation_engineer
+      - developer_experience_engineer
+  ai_data:
+    activation: ai_ml_data_or_knowledge_work
+    roles:
+      - ai_engineer
+      - ml_engineer
+      - llm_engineer
+      - agent_engineer
+      - rag_knowledge_engineer
+      - data_engineer
+      - analytics_engineer
+      - model_evaluation_engineer
+      - mlops_engineer
+  devsecops_platform:
+    activation: build_deploy_runtime_or_platform_change
+    roles:
+      - devops_engineer
+      - devsecops_engineer
+      - platform_engineer
+      - cloud_engineer
+      - build_engineer
+      - release_engineer
+      - site_reliability_engineer
+      - observability_engineer
+      - finops_engineer
+      - infrastructure_engineer
+      - database_engineer
+  cybersecurity:
+    activation: security_relevant_or_high_impact
+    roles:
+      - cybersecurity_architect
+      - application_security_engineer
+      - cloud_security_engineer
+      - iam_zero_trust_engineer
+      - security_operations_engineer
+      - threat_modeler
+      - detection_engineer
+      - red_team_reviewer
+      - penetration_test_reviewer
+      - supply_chain_security_engineer
+  quality_verification:
+    activation: implementation_or_promotion
+    roles:
+      - qa_architect
+      - test_engineer
+      - test_automation_engineer
+      - performance_engineer
+      - reliability_engineer
+      - security_tester
+      - evaluation_engineer
+      - independent_verifier
+  governance_assurance:
+    activation: regulated_sensitive_licensed_or_high_impact
+    roles:
+      - risk_specialist
+      - privacy_specialist
+      - legal_ip_specialist
+      - open_source_license_specialist
+      - compliance_specialist
+      - qms_ims_specialist
+      - standards_specialist
+      - audit_specialist
+      - documentation_controller
+  operations_continuity:
+    activation: production_or_service_operation
+    roles:
+      - production_operations_engineer
+      - incident_commander
+      - support_engineer
+      - bcp_dr_specialist
+      - capacity_manager
+      - service_manager
+      - problem_manager
+  business_customer:
+    activation: commercial_or_customer_facing
+    roles:
+      - business_architect
+      - business_analyst
+      - commercial_specialist
+      - marketing_specialist
+      - sales_engineer
+      - customer_success_specialist
+      - training_enablement_specialist
+mandatory_patterns:
+  production_release:
+    required_roles:
+      - production_manager
+      - release_engineer
+      - site_reliability_engineer
+      - test_engineer
+      - application_security_engineer
+      - change_manager
+      - service_manager
+    independent_review: true
+  security_critical:
+    required_roles:
+      - cybersecurity_architect
+      - devsecops_engineer
+      - iam_zero_trust_engineer
+      - application_security_engineer
+      - site_reliability_engineer
+      - risk_specialist
+      - independent_verifier
+    independent_review: true
+  ai_agentic_high_impact:
+    required_roles:
+      - ai_agentic_architect
+      - agent_engineer
+      - model_evaluation_engineer
+      - rag_knowledge_engineer
+      - devsecops_engineer
+      - application_security_engineer
+      - product_manager
+      - independent_verifier
+    independent_review: true
+routing:
+  maximum_default_team_size: 8
+  expand_only_on:
+    - unresolved_specialist_gap
+    - criticality_increase
+    - independent_review_requirement
+    - compliance_requirement
+    - incident_escalation
+  deny_execution_states:
+    - REFERENCE_ONLY
+    - QUARANTINED
+    - DEPRECATED
+    - RETIRED

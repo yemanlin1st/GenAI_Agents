@@ -1,0 +1,82 @@
+version: 1.0
+migration: CODEX_PEFY_DELTA
+assessed: 2026-08-25
+source_repository: yemanlin1st/codex
+source_base_merge_commit: 419f085cc4629762e2652b94ecec4ebdb2fcaed4
+source_local_head: 3ef0725471996675a5f9af766af39b904e2196cf
+local_commits: 16
+core_code_modified: false
+summary: >-
+  The complete PEFY-local delta relative to the Codex fork merge base consists of
+  added governance/evidence/MCP/workflow artifacts only. No upstream Codex source
+  file is modified. Therefore the safe migration strategy is to extract the overlay
+  into the sovereign PEFY control plane, validate provenance/access classification,
+  then synchronize the Codex code fork against current upstream without reapplying
+  code patches.
+
+artifacts:
+  - path: docs/account-status/PEA_ANTI_BIAS_FABLE5_BENCHMARK_UPGRADE_2026-06-13.md
+    class: governance_evidence
+    destination_role: control_plane_evidence
+  - path: docs/account-status/PEA_MCP_ANTIBIAS_INTEGRATION_2026-06-16.md
+    class: governance_evidence
+    destination_role: control_plane_evidence
+  - path: docs/account-status/PEA_SPECIAL_REPORT_2026-06-13.md
+    class: governance_evidence
+    destination_role: control_plane_evidence
+  - path: docs/account-status/PEA_SWOT_TOWS_AUDIT_FIX_2026-06-13.md
+    class: governance_evidence
+    destination_role: control_plane_evidence
+  - path: docs/account-status/STATUS_2026-06-13.md
+    class: governance_status
+    destination_role: control_plane_evidence
+  - path: docs/account-status/VIDEO_INTAKE_NlPh12FTIZQ_2026-06-16.md
+    class: intake_evidence
+    destination_role: control_plane_evidence_review
+  - path: mcp/approved-mcp-registry-v9-2-summary.md
+    class: mcp_governance
+    destination_role: control_plane_mcp_policy
+  - path: mcp/pea-v9-3-creator-operator-mcp-stack.md
+    class: mcp_governance
+    destination_role: control_plane_mcp_policy
+  - path: mcp/pea-v9-3-mcp-permission-matrix.md
+    class: security_policy
+    destination_role: control_plane_security_policy
+  - path: mcp/pea-v9-3-operator-stack-activation-summary.md
+    class: operational_governance
+    destination_role: control_plane_evidence
+  - path: mcp/pea-v9-3-update-log-2026-06-16.md
+    class: change_record
+    destination_role: control_plane_change_log
+  - path: mcp/tool-allowlist.json
+    class: security_configuration
+    destination_role: control_plane_policy_configuration
+    handling: review_access_classification_before_copying_to_any_new_location
+  - path: mcp/top-5-mcp-benchmark-v9-2.md
+    class: benchmark_evidence
+    destination_role: control_plane_evidence
+  - path: workflows/elite-anti-bias-gate.md
+    class: workflow_policy
+    destination_role: control_plane_workflow_policy
+  - path: workflows/mcp-secure-tool-use.md
+    class: workflow_security_policy
+    destination_role: control_plane_workflow_policy
+  - path: workflows/video-to-account-intake.md
+    class: workflow_policy
+    destination_role: control_plane_workflow_policy
+
+migration_gates:
+  - private_authoritative_control_plane_destination_exists
+  - every_artifact_access_classified_before_migration
+  - provenance_and_original_commit_references_retained
+  - security_configuration_reviewed_before_copy
+  - copied_artifacts_hash_or_content_equivalence_verified
+  - codex_fork_contains_no_remaining_PEFY_local_delta_after_cutover
+  - current_upstream_codex_qualification_passes
+  - rollback_branch_pefy-delta_2026_06_16_retained_until_acceptance
+
+post_migration_codex_strategy:
+  local_code_delta: none
+  preferred: synchronize_or_recreate_thin_fork_from_qualified_current_upstream
+  pefy_integration: external_versioned_adapter_and_policy_bundle
+  avoid: reintroducing_account_governance_documents_into_codex_fork

@@ -1,0 +1,239 @@
+version: 1.4
+name: PEFY Portfolio Remediation Backlog
+updated: 2026-08-25
+
+items:
+  - id: CP-001
+    priority: P0
+    component: PEFY sovereign control plane
+    issue: PEFY governance currently resides partly inside external forks
+    action: create_private_authoritative_control_plane_and_migrate_governance_assets
+    state: BLOCKED_EXTERNAL_ACTION
+    blocker: current_GitHub_connector_does_not_expose_repository_creation
+    exit_criteria:
+      - private_repository_exists
+      - access_and_branch_protection_configured
+      - governance_assets_migrated_with_provenance
+      - runtime_adapters_validated
+
+  - id: CI-001
+    priority: P0
+    component: portfolio_and_upstream_audit_workflow
+    state: CONFIGURED_NOT_RUNTIME_QUALIFIED
+    action: enable_or_restore_GitHub_Actions_execution_then_collect_compile_inventory_audit_and_artifact_evidence
+    evidence:
+      - workflow_paths_corrected
+      - upstream_audit_script_implemented
+      - portfolio_auto_discovery_script_implemented
+      - multiple_matching_push_commits_produced_zero_workflow_runs
+    blockers:
+      - no_GitHub_Actions_run_for_branch_commits
+      - no_runtime_compile_or_API_execution_evidence_from_CI
+
+  - id: COD-001
+    priority: P0
+    component: yemanlin1st/codex
+    upstream: openai/codex
+    state: U3
+    drift: {ahead: 16, behind: 9661}
+    action: migrate_16_non_code_pefy_overlay_artifacts_then_qualify_clean_current_upstream_baseline
+    qualification_pr: 1
+    rollback: pefy-delta/2026-06-16
+    resolved_findings:
+      - pefy_local_delta_modifies_no_codex_core_source_file
+    blockers:
+      - private_control_plane_destination_not_available_from_current_connector
+      - no_runtime_qualification_evidence_yet
+
+  - id: OCL-001
+    priority: P0
+    component: yemanlin1st/openclaw
+    upstream: openclaw/openclaw
+    state: U1
+    drift: {ahead: 0, behind: 57141}
+    action: migration_with_runtime_schema_plugin_data_provenance_and_third_party_notice_review
+    qualification_pr: 1
+    rollback: rollback/2026-04-03
+    resolved_findings:
+      - github_NOASSERTION_was_false_positive_both_LICENSE_files_are_MIT
+    blockers:
+      - no_CI_evidence_yet
+      - extreme_migration_scale
+      - runtime_schema_plugin_and_data_migration_not_yet_qualified
+    required_provenance:
+      - preserve_current_upstream_MIT_text
+      - preserve_required_THIRD_PARTY_NOTICES
+
+  - id: NEMO-001
+    priority: P0
+    component: PEFY-TECH/NemoClaw
+    upstream: NVIDIA/NemoClaw
+    state: U1
+    drift: {ahead: 0, behind: 4757}
+    action: qualify_organization_level_migration_then_propagate_verified_commit_to_secondary_forks
+    qualification_pr: 1
+    rollback: rollback/2026-03-18
+    blockers:
+      - no_CI_evidence_yet
+      - migration_scale_runtime_and_policy_boundary_change
+
+  - id: OCO-001
+    priority: P1
+    component: yemanlin1st/opencode
+    upstream: anomalyco/opencode
+    state: U1
+    drift: {ahead: 0, behind: 5277}
+    action: qualify_major_upstream_migration
+    qualification_pr: 1
+    rollback: rollback/2026-03-15
+    blocker: no_CI_evidence_yet
+
+  - id: N8N-001
+    priority: P1
+    component: yemanlin1st/n8n
+    upstream: n8n-io/n8n
+    state: U1
+    source_type: FAIR_CODE_RESTRICTED
+    drift: {ahead: 0, behind: 7644}
+    versions:
+      local: 1.115.0
+      upstream_generation: 2.37.0
+    runtime_delta:
+      node: ">=22.16 -> >=24.0.0"
+      pnpm: ">=10.16.1 -> >=11.22.0"
+    action: qualify_major_generation_database_workflow_credentials_worker_webhook_custom_node_and_runtime_migration
+    qualification_pr: 1
+    qualification_branch: upstream-sync/2026-08-25-v2
+    prior_qualification_branch: upstream-sync/2026-08-25
+    rollback: rollback/2025-10-07
+    blockers:
+      - no_CI_evidence_yet
+      - database_and_encryption_migration_not_qualified
+      - workflow_and_custom_node_compatibility_not_qualified
+      - intended_commercial_or_client_facing_use_requires_license_legal_review
+    license_controls:
+      - Sustainable_Use_License_applies_to_main_non_enterprise_code_subject_to_its_terms
+      - dot_ee_code_requires_applicable_n8n_Enterprise_License
+      - preserve_notices_and_modified_copy_obligations
+
+  - id: DFR-001
+    priority: P1
+    component: yemanlin1st/deer-flow
+    upstream: bytedance/deer-flow
+    state: U1
+    drift: {ahead: 0, behind: 1353}
+    versions: {local: 0.1.0, upstream: 2.1.0}
+    action: qualify_architecture_migration_and_preserve_pefy_orchestration_knowledge_policy_and_vector_authority_as_external_adapters
+    qualification_pr: 2
+    qualification_branch: upstream-sync/2026-08-25
+    rollback: rollback/2026-03-25
+    blockers:
+      - no_CI_evidence_yet
+      - extension_api_and_plugin_compatibility_not_qualified
+      - auth_jwt_channel_and_sandbox_security_not_qualified
+      - ragflow_and_pefy_knowledge_vector_interoperability_not_qualified
+    upstream_improvements:
+      - dedicated_extension_api
+      - redis_postgres_browser_memory_extras
+      - expanded_channels
+      - auth_security_dependencies
+      - read_only_RAGFlow_retrieval_with_dataset_scope_hardening
+
+  - id: MGP-001
+    priority: P1
+    component: yemanlin1st/MetaGPT-x
+    upstream: FoundationAgents/MetaGPT
+    state: U1
+    drift: {ahead: 0, behind: 1495}
+    action: qualify_migration_against_canonical_source_not_intermediate_fork
+    qualification_pr: 1
+    rollback: rollback/2024-11-11
+    blocker: no_CI_evidence_yet
+
+  - id: CRA-001
+    priority: P1
+    component: yemanlin1st/crewAI
+    upstream: crewAIInc/crewAI
+    state: U1
+    drift: {ahead: 0, behind: 543}
+    action: qualify_current_upstream_with_telemetry_security_observability_and_multi_agent_regression_gates
+    qualification_pr: 2
+    superseded_pr: 1
+    qualification_branch: upstream-sync/2026-08-25
+    rollback: rollback/2026-04-10
+    resolved_findings:
+      - superseded_ambiguous_PR_closed_without_merge
+    blockers:
+      - no_runtime_qualification_evidence_yet
+    upstream_improvements:
+      - task_failure_telemetry_correctness
+      - sensitive_error_type_handling
+      - checkpoint_event_restore_hardening
+      - broader_tests_and_pip_audit
+
+  - id: CLC-001
+    priority: P1
+    component: yemanlin1st/claude-code
+    upstream: anthropics/claude-code
+    state: U1
+    source_type: VENDOR_DISTRIBUTION
+    drift: {ahead: 0, behind: 170}
+    action: prefer_official_supported_distribution_and_track_compatibility_pending_legal_ip_review
+    qualification_pr: 1
+    rollback: rollback/2026-03-28
+    blockers:
+      - no_CI_evidence_yet
+      - effective_license_or_distribution_terms_require_review
+
+  - id: DSH-001
+    priority: P1
+    component: DeepSeek_Harness_skill
+    upstream: deepseek-ai/deepseek-harness
+    state: EXPERIMENTAL
+    source_type: [OSS_PERMISSIVE, EXPERIMENTAL_PREVIEW]
+    action: pin_tested_sdk_and_runtime_versions_before_production_like_use
+    blockers:
+      - developer_preview
+      - runtime_not_deployed_or_qualified_on_target_host
+
+  - id: CLAUDE-CATALOG-001
+    priority: P2
+    component: claude_related_guides_catalogs_templates_and_marketplaces
+    state: DISCOVERY_ONLY
+    action: consolidate_capability_index_and_prevent_automatic_runtime_installation
+    rationale: multiple_overlapping_public_reference_repositories_detected
+    exit_criteria:
+      - each_reference_repo_classified
+      - duplicate_runtime_content_not_auto_installed
+      - qualified_capabilities_imported_individually_with_provenance
+
+  - id: NEMO-002
+    priority: P2
+    component: yemanlin1st/NemoClaw
+    upstream: PEFY-TECH/NemoClaw
+    state: U0_TO_PARENT
+    drift: {ahead: 0, behind: 0}
+    inherited_canonical_drift: 4757
+    action: wait_for_NEMO_001_then_propagate_exact_qualified_commit
+
+  - id: DFL-001
+    priority: P3
+    component: yemanlin1st/DeepFlow
+    upstream: DeepFlowcc/DeepFlow
+    state: U0
+    source_type: OSS_COPYLEFT
+    drift: {ahead: 0, behind: 0}
+    action: monitor_dormancy_license_and_successor_risk
+
+portfolio_rules:
+  - process_P0_before_P1_unless_dependency_order_requires_otherwise
+  - never_merge_migration_PR_without_release_qualification_matrix
+  - extract_PEFY_owned_governance_from_external_forks_before_destructive_sync
+  - preserve_rollback_for_every_U1_U3_migration
+  - remediate_multi_hop_forks_at_the_authoritative_layer_first
+  - discovery_catalogs_are_never_automatic_runtime_dependencies
+  - license_metadata_NOASSERTION_must_be_verified_against_real_license_files_before_blocking
+  - public_readability_does_not_imply_permissive_redistribution_rights
+  - source_type_policy_must_be_applied_before_upgrade_or_commercialization
+  - ambiguous_or_invalid_qualification_artifacts_must_be_superseded_not_reused
+  - close_or_downgrade_items_only_with_evidence

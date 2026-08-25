@@ -1,0 +1,174 @@
+$schema: https://json-schema.org/draft/2020-12/schema
+$id: https://pefy.example/schemas/project-adapter.schema.yaml
+title: PEFY Project Adapter
+type: object
+required:
+  - project_id
+  - owner
+  - lifecycle_stage
+  - criticality
+  - repositories
+  - environments
+  - technology
+  - data_classification
+  - authority
+  - qualification
+properties:
+  project_id:
+    type: string
+    minLength: 1
+  name:
+    type: string
+  owner:
+    type: string
+    minLength: 1
+  business_unit:
+    type: string
+  lifecycle_stage:
+    enum: [DISCOVERY, DESIGN, DEVELOPMENT, PILOT, PRE_PRODUCTION, PRODUCTION, MAINTENANCE, RETIRED]
+  criticality:
+    enum: [LOW, MODERATE, HIGH, CRITICAL]
+  repositories:
+    type: array
+    minItems: 1
+    items:
+      type: object
+      required: [repository, role]
+      properties:
+        repository: {type: string}
+        role:
+          enum: [SOURCE, INFRASTRUCTURE, DOCUMENTATION, GOVERNANCE, DATA, MODEL, ADAPTER, REFERENCE]
+        canonical_upstream: {type: [string, 'null']}
+        visibility: {enum: [PUBLIC, PRIVATE, INTERNAL, UNKNOWN]}
+        default_branch: {type: [string, 'null']}
+  environments:
+    type: array
+    minItems: 1
+    items:
+      type: object
+      required: [name, class]
+      properties:
+        name: {type: string}
+        class: {enum: [LOCAL, DEV, TEST, QA, STAGING, PRE_PROD, PROD, DR]}
+        deployment: {type: string}
+        region: {type: [string, 'null']}
+        target_host_required: {type: boolean}
+  technology:
+    type: object
+    properties:
+      languages:
+        type: array
+        items: {type: string}
+      frameworks:
+        type: array
+        items: {type: string}
+      runtimes:
+        type: array
+        items: {type: string}
+      package_managers:
+        type: array
+        items: {type: string}
+      databases:
+        type: array
+        items: {type: string}
+      deployment_targets:
+        type: array
+        items: {type: string}
+  data_classification:
+    type: object
+    required: [highest]
+    properties:
+      highest:
+        enum: [PUBLIC, INTERNAL, CONFIDENTIAL, RESTRICTED]
+      pii: {type: boolean}
+      secrets: {type: boolean}
+      regulated: {type: boolean}
+      residency_constraints:
+        type: array
+        items: {type: string}
+      retention_policy: {type: [string, 'null']}
+  compliance:
+    type: object
+    properties:
+      standards:
+        type: array
+        items: {type: string}
+      laws_regulations:
+        type: array
+        items: {type: string}
+      contractual_requirements:
+        type: array
+        items: {type: string}
+  service_objectives:
+    type: object
+    properties:
+      availability_target: {type: [string, 'null']}
+      rto: {type: [string, 'null']}
+      rpo: {type: [string, 'null']}
+      latency_targets:
+        type: array
+        items: {type: string}
+      capacity_targets:
+        type: array
+        items: {type: string}
+  users:
+    type: object
+    properties:
+      user_types:
+        type: array
+        items: {type: string}
+      accessibility_requirements:
+        type: array
+        items: {type: string}
+      offline_first: {type: boolean}
+      intermittent_connectivity: {type: boolean}
+  authority:
+    type: object
+    required: [control_plane, lifecycle_gate]
+    properties:
+      control_plane: {const: METAPEFYON_OMEGA_PEA}
+      lifecycle_gate: {const: AGENT_MANAGER}
+      approved_execution_adapters:
+        type: array
+        items: {type: string}
+      forbidden_authority_overlaps:
+        type: array
+        items: {type: string}
+  resources:
+    type: object
+    properties:
+      token_budget: {type: [integer, 'null'], minimum: 0}
+      api_cost_budget: {type: [number, 'null'], minimum: 0}
+      max_concurrency: {type: [integer, 'null'], minimum: 1}
+      cpu_limit: {type: [string, 'null']}
+      memory_limit: {type: [string, 'null']}
+      gpu_limit: {type: [string, 'null']}
+      storage_limit: {type: [string, 'null']}
+  qualification:
+    type: object
+    required: [required_gates]
+    properties:
+      required_gates:
+        type: array
+        items:
+          enum:
+            - BUILD
+            - UNIT
+            - INTEGRATION
+            - E2E
+            - SAST
+            - SECRETS
+            - DEPENDENCIES
+            - SBOM
+            - PROVENANCE
+            - PERFORMANCE
+            - CAPACITY
+            - RECOVERY
+            - ROLLBACK
+            - OBSERVABILITY
+            - LICENSE_IP
+            - TARGET_HOST
+            - HUMAN_APPROVAL
+      evidence_location: {type: [string, 'null']}
+      production_owner: {type: [string, 'null']}
+additionalProperties: false

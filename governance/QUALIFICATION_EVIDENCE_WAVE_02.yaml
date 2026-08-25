@@ -1,0 +1,177 @@
+version: 2.2
+updated: 2026-08-25
+scope: convergence_wave_02
+status: EVIDENCE_ADVANCED_NOT_PRODUCTION_QUALIFIED
+
+review_authority:
+  sovereign_control_plane: PEA_MƐTAPEFYON_OMEGA
+  agent_manager:
+    status: IMPLEMENTED_AND_EXECUTED
+    gate: governance/AGENT_MANAGER_REVIEW_GATE.md
+    skill: skills/agent-manager/SKILL.md
+    review_record: governance/AGENT_MANAGER_REVIEW_WAVE_02.md
+    role: lifecycle_admission_tool_review_output_review_quarantine_change_retirement
+    authority: subordinate_to_human_PEA_METAPEFYON_and_council_governance
+    lifecycle: [REFERENCE_ONLY, EXPERIMENTAL, SANDBOX_QUALIFIED, CONTROLLED_PILOT, PRODUCTION_QUALIFIED, QUARANTINED, DEPRECATED, RETIRED]
+    rule: discovery_is_not_installation_installation_is_not_activation_activation_is_not_qualification_qualification_is_not_authorization
+
+components:
+  - component: PEFY-TECH/NemoClaw
+    migration_pr: 1
+    canonical_source: NVIDIA/NemoClaw
+    candidate_sha: fa4eea8cfc89096fe562c3624cb7ec38496ecfda
+    agent_manager_state: SANDBOX_QUALIFIED
+    positive_evidence:
+      reviewed_production_npm_audit_high_threshold: PASS
+      build_typecheck: PASS
+      installer_integration: 606_PASS_1_SKIP
+      wechat_locked_runtime_audit: PASS
+      plugin_tests: 909_PASS
+      plugin_coverage: {statements: 95.53, branches: 90.22, functions: 99.45, lines: 96.21}
+      shellcheck_SARIF: PASS
+      codeql_python: PASS
+      codeql_javascript_typescript: PASS
+      cli_shards_passed: [1, 2, 4, 5, 6, 7, 8, 9, 11]
+      focused_qualification_pr: 4
+      focused_timeout_probe:
+        test: setup-nim-flow-serving-profile.test.ts
+        repetitions: 5
+        result: PASS_ALL
+        original_shard_3_classification: FLAKE_OR_CI_CONTENTION_NOT_REPRODUCIBLE
+      focused_shard_9: PASS
+    non_product_red_signals:
+      plugin_job: GitHub_Code_Quality_upload_HTTP_403_after_909_tests_passed
+      static_job: historical_origin_main_growth_guardrail_contamination
+    portability_blockers:
+      shard_10:
+        class: FORK_PROVENANCE_PORTABILITY
+        requirement: preserve_canonical_NVIDIA_repo_SHA_workflow_payload_identity_plus_separate_PEFY_repo_SHA_patch_digest
+      shard_12:
+        class: CANONICAL_HISTORY_PORTABILITY
+        canonical_tags_present: [v0.0.36, v0.0.55, v0.0.74, v0.0.89]
+        PEFY_fork_tags_absent: [v0.0.36, v0.0.55, v0.0.74, v0.0.89]
+        requirement: verified_canonical_refs_or_read_only_mirror_no_blind_retag
+    portability_contract: governance/NEMOCLAW_FORK_PORTABILITY_CONTRACT.md
+    human_blocker: explicit_DCO_Signed_off_by_attestation
+    target_host_gates_remaining: [OpenShell_policy_isolation, credential_injection, performance, recovery, rollback, live_provider_policy]
+    merge_policy: BLOCKED_NO_AUTO_MERGE
+
+  - component: yemanlin1st/openclaw
+    migration_pr: 1
+    canonical_source: openclaw/openclaw
+    candidate_sha: b9d522738d5e087c1783e38eb1401eebcabc40de
+    version: 2026.8.1
+    schemas: {state: 9, agent: 17}
+    github_hosted_qualification_pr: 3
+    qualification_run: 32860714969
+    agent_manager_state: SANDBOX_QUALIFIED
+    core_qualification: PASS
+    core_passed:
+      - frozen_dependency_install
+      - exact_version_and_schema_declarations
+      - dependency_vulnerability_gate
+      - base_config_schema
+      - sqlite_session_schema
+      - plugin_SDK_surface
+      - plugin_contracts
+      - authentication_compatibility
+      - strict_build_smoke
+      - CLI_smoke
+    static_first_attempt:
+      passed_before_lint: [no_conflict_markers, workflow_checks, runtime_sidecars, plugin_inventory, plugin_version_sync]
+      core_lint: INFRASTRUCTURE_CANCELLED
+      evidence: oxlint_core_ran_over_9_minutes_then_runner_received_shutdown_signal_exit_143
+      product_lint_failure_observed: false
+    static_rerun: IN_PROGRESS_AT_CAPTURE
+    codeql_observation: upstream_matrix_security_high_skipped_on_this_PR_surface
+    target_host_gates_remaining: [state_migration_real_data, live_provider_integrations, memory_session_migration, performance, recovery, rollback]
+    merge_policy: BLOCKED_UNTIL_TARGET_HOST_PROOF_AND_STATIC_TERMINAL_EVIDENCE
+
+  - component: yemanlin1st/opencode
+    migration_pr: 1
+    canonical_source: anomalyco/opencode
+    candidate_sha: 69aaa22793bcbe0b016ad9cfad22616906766df0
+    toolchain: {node: 24, bun: 1.3.14, ai_sdk_generation: 6}
+    upstream_runner_issue: blacksmith_runners_unavailable_to_fork
+    github_hosted_qualification_pr: 3
+    qualification_run: 32859987207
+    agent_manager_state: WINDOWS_QUARANTINED_LINUX_SANDBOX_ONLY
+    linux:
+      e2e: PASS
+      unit_summary: {pass: 3315, skip: 22, todo: 1, fail: 1}
+      failure: unknown_model_subprocess_duration_15212ms_exceeded_15000ms_assertion
+      classification: TIGHT_TIMING_THRESHOLD_OR_SHARED_RUNNER_CONTENTION_PENDING_REPRODUCIBILITY
+    windows:
+      unit: FAIL
+      root_cause: ripgrep_15_1_0_download_and_PowerShell_Expand_Archive_paths_exceed_5000ms_test_timeouts_and_receive_SIGTERM
+      source_confirmed: packages/core/src/ripgrep/binary.ts_forces_PowerShell_Expand_Archive_for_zip
+      canonical_upstream_same_behavior: true
+      remediation_concept: prefer_tar_or_bsdtar_when_available_with_PowerShell_fallback
+      remediation_write_attempt: BLOCKED_BY_TOOL_SAFETY_CONTROL_NOT_APPLIED
+      classification: WINDOWS_RIPGREP_PORTABILITY_BLOCKER
+      e2e: IN_PROGRESS_AT_CAPTURE
+    retained_gates_remaining: [patched_MCP_dependencies, provider_adapters, AI_SDK_5_to_6_behavior, Windows_ripgrep_portability, timing_reproducibility, performance, rollback]
+    merge_policy: BLOCKED
+
+  - component: yemanlin1st/MetaGPT-x
+    migration_pr: 1
+    canonical_source: FoundationAgents/MetaGPT
+    candidate_sha: 11cdf466d042aece04fc6cfd13b28e1a70341b1f
+    canonical_version: 1.0.0
+    supported_python: '>=3.9,<3.12'
+    agent_manager_state: SANDBOX_QUALIFIED_WITH_EXPLICIT_DOWNSTREAM_PATCH
+    canonical_qualification_pr: 4
+    discovered_cli_failure:
+      python_3_9: PASS
+      python_3_10: FAIL_WITH_CLICK_8_4_2_TYPER_0_9
+      python_3_11: FAIL_WITH_CLICK_8_4_2_TYPER_0_9
+      exception: Secondary_flag_is_not_valid_for_non_boolean_flag
+    click_compatibility_remediation:
+      pr: 5
+      patch: click_less_than_8_2_adjacent_to_typer_0_9_0
+      qualification_pr: 6
+      qualification_run: 32860882853
+      package_smoke:
+        python_3_9: PASS_INSTALL_PIPCHECK_IMPORT_CLI
+        python_3_10: PASS_INSTALL_PIPCHECK_IMPORT_CLI
+        python_3_11: PASS_INSTALL_PIPCHECK_IMPORT_CLI
+      canonical_unit_py3_10: PASS
+      disposition: PATCH_CANDIDATE_TECHNICALLY_QUALIFIED_FOR_PACKAGE_CLI_AND_CANONICAL_UNIT_SUITE_NOT_YET_PRODUCTION_PROMOTED
+    ci_security_hardening:
+      legacy_unit_workflow_pr: 3
+      improvements: [pull_request_not_pull_request_target, contents_read, no_persisted_credentials, upload_artifact_v4]
+      old_0_8_1_runtime_debt: paddlepaddle_2_4_2_unavailable
+    precommit_portability:
+      canonical_problem: SSH_hook_sources_plus_checkout_v2_setup_python_v2
+      remediation_pr: 7
+      changes: [HTTPS_hook_sources, checkout_v4, setup_python_v4, contents_read, no_persisted_credentials, ubuntu_22_04]
+      qualification_run: 32861378346
+      result: PASS
+    capability_retention:
+      OCR: EXPLICIT_DECISION_REQUIRED_CANONICAL_1_0_0_COMMENTS_OCR_EXTRA_OUT
+      RAG: RETAIN_AND_REQUALIFY
+    remaining_gates: [OCR_retention_decision, broader_PEFY_integration, performance, rollback, license_provenance_review]
+    merge_policy: BLOCKED_UNTIL_RETENTION_INTEGRATION_AND_PROMOTION_GATES_PASS
+
+qualification_patterns:
+  immutable_upstream_base:
+    - exact_vendor_SHA_as_base
+    - qualification_head_from_same_SHA
+    - qualification_only_delta
+    - never_merge_test_PR
+  github_hosted_fallback:
+    use_when: upstream_CI_requires_unavailable_third_party_runners_or_default_branch_trusted_actions
+    rule: preserve_upstream_workflow_and_add_nonmergeable_PEFY_evidence_workflow
+  fork_provenance:
+    rule: canonical_vendor_identity_and_PEFY_identity_must_be_separate_and_verifiable
+  layered_remediation:
+    rule: application_compatibility_CI_portability_and_governance_changes_use_separate_reviewable_layers
+
+promotion_rules:
+  - Agent_Manager_review_required_for_material_agent_tool_skill_harness_admission_or_upgrade
+  - no_workflow_success_counts_if_substantive_jobs_are_skipped
+  - product_failure_platform_failure_harness_failure_and_governance_failure_must_be_classified_separately
+  - DCO_or_legal_attestations_require_authorized_human_action
+  - no_security_identity_or_digest_check_may_be_weakened_to_make_a_fork_green
+  - no_production_qualified_state_without_reproducible_target_host_runtime_security_performance_recovery_and_rollback_evidence
+  - qualification_PRs_and_test_trigger_branches_are_never_merge_candidates

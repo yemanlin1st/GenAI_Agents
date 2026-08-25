@@ -1,0 +1,104 @@
+version: 1.0
+updated: 2026-08-25
+purpose: >-
+  Prevent capability, governance, configuration, data or policy loss during upstream convergence.
+  This map is a retention contract, not merge approval.
+
+capabilities:
+  - component: yemanlin1st/codex
+    retention_class: PEFY_OWNED_OVERLAY
+    evidence: 16_local_commits_modify_no_codex_core_source
+    retain:
+      - docs/account-status/**
+      - mcp/**
+      - workflows/**
+    action: migrate_to_private_sovereign_control_plane_before_clean_upstream_baseline_is_promoted
+    core_code_rebase_required: false
+
+  - component: yemanlin1st/openclaw
+    retention_class: RUNTIME_STATE_AND_CONFIGURATION
+    local_code_delta: none_detected
+    retain:
+      - runtime_configuration
+      - provider_configuration
+      - user_data
+      - session_and_trajectory_data_if_operationally_required
+      - plugin_and_skill_inventory
+      - approval_and_permission_policy_mappings
+    action: backup_transform_validate_restore_against_state_schema_9_and_agent_schema_17
+    sovereign_authority: PEFY_control_plane
+
+  - component: PEFY-TECH/NemoClaw
+    retention_class: ORGANIZATION_RUNTIME_CONFIGURATION
+    local_code_delta: none_detected
+    retain:
+      - OpenShell_policy_mappings
+      - target_environment_profiles
+      - provider_and_inference_routing_configuration
+      - secrets_references_not_secret_values
+      - PEFY_zero_trust_policy_overlays
+    action: qualify_at_PEFY_TECH_first_then_propagate_exact_commit_downstream
+    downstream: yemanlin1st/NemoClaw
+
+  - component: yemanlin1st/opencode
+    retention_class: EXTERNAL_ADAPTER_CONFIGURATION
+    local_code_delta: none_detected
+    retain:
+      - provider_routing_configuration
+      - MCP_policy_and_permission_mapping
+      - external_secrets_references
+      - approved_tool_profiles
+      - user_level_client_preferences_if_required
+    action: keep_PEFY_policy_outside_upstream_code_and_revalidate_after_AI_SDK_6_and_MCP_patchset_migration
+
+  - component: yemanlin1st/MetaGPT-x
+    retention_class: CAPABILITY_CARVE_OUT
+    local_code_delta: none_detected
+    at_risk_capabilities:
+      - OCR_extra_active_locally_but_disabled_in_canonical_setup
+    retain:
+      - OCR_requirement_if_operationally_needed
+      - PEFY_model_router_adapter
+      - PEFY_knowledge_RAG_adapter
+    action: externalize_OCR_as_separately_qualified_PEFY_skill_or_adapter_instead_of_reintroducing_unreviewed_core_patch
+
+  - component: yemanlin1st/deer-flow
+    retention_class: AUTHORITY_BOUNDARY
+    local_code_delta: none_detected
+    retain:
+      - PEFY_sovereign_knowledge_authority
+      - PEFY_vector_index_authority
+      - PEFY_model_router_adapter
+      - PEFY_approval_and_policy_adapter
+    action: treat_RAGFlow_and_new_memory_extensions_as_subordinate_retrieval_adapters
+
+  - component: yemanlin1st/crewAI
+    retention_class: AUTHORITY_BOUNDARY
+    local_code_delta: none_detected
+    retain:
+      - PEFY_orchestration_selection_policy
+      - PEFY_observability_mapping
+      - PEFY_tool_permission_and_approval_gates
+    action: adopt_upstream_failure_telemetry_hardening_without_creating_parallel_control_plane
+
+  - component: yemanlin1st/n8n
+    retention_class: BUSINESS_RUNTIME_STATE
+    local_code_delta: none_detected
+    retain:
+      - workflow_definitions
+      - credentials_encryption_material_under_secure_backup
+      - credential_type_compatibility_map
+      - webhook_and_callback_contracts
+      - custom_or_community_node_inventory
+      - worker_queue_topology
+      - environment_configuration
+    action: backup_and_migrate_as_data_runtime_state_not_as_unreviewed_source_customization
+    legal_gate: deployment_model_must_be_compatible_with_Sustainable_Use_License_and_applicable_Enterprise_terms
+
+rules:
+  - never_assume_zero_git_delta_means_zero_operational_delta
+  - never_store_secret_values_in_this_map
+  - preserve_capability_by_adapter_before_forking_upstream_core
+  - migrate_authoritative_PEFY_governance_out_of_external_forks
+  - exact_qualified_commits_only_for_multi_hop_fork_propagation
+  - capability_removal_requires_explicit_decision_and_evidence
