@@ -1,4 +1,4 @@
-version: 1.2
+version: 1.3
 purpose: >-
   Registry for preserving intentional PEFY deltas from externally-derived repositories.
   Entries are evidence records, not automatic upgrade permissions. Multi-hop fork
@@ -55,8 +55,13 @@ entries:
     ahead_by: 0
     behind_by: 57141
     license_local: MIT
-    license_upstream: NOASSERTION
-    remediation: extreme_migration_scale_with_license_runtime_schema_plugin_and_data_review
+    license_upstream: MIT
+    license_metadata_upstream: NOASSERTION
+    license_evidence:
+      local: LICENSE@f7b526698bb7ed2d26d96c49f2f32234c88f69bc
+      upstream: LICENSE@ebaebf7c416761a32f932ad70ebe5d1d2e214f68
+      note: upstream_LICENSE_references_THIRD_PARTY_NOTICES.md
+    remediation: extreme_migration_scale_with_runtime_schema_plugin_data_and_provenance_review
     local_delta_policy: no_local_commits_detected_but_preserve_runtime_configuration_and_user_data_externally
     qualification_branch: upstream-sync/2026-08-25
     rollback_ref: rollback/2026-04-03
@@ -186,13 +191,7 @@ entries:
     priority: P1
 
 entry_schema:
-  required:
-    - repository
-    - upstream
-    - state
-    - remediation
-    - local_delta_policy
-    - priority
+  required: [repository, upstream, state, remediation, local_delta_policy, priority]
   optional:
     - fork_parent
     - canonical_source
@@ -203,6 +202,8 @@ entry_schema:
     - inherited_canonical_drift
     - license_local
     - license_upstream
+    - license_metadata_upstream
+    - license_evidence
     - runtime_delta
     - schema_delta
     - security_delta
