@@ -1,0 +1,71 @@
+version: 1.0
+purpose: >-
+  Registry for preserving intentional PEFY deltas from externally-derived repositories.
+  Entries are evidence records, not automatic upgrade permissions.
+
+states:
+  U0: clean
+  U1: behind_only
+  U2: ahead_only
+  U3: diverged
+  U4: orphaned_moved_archived
+
+conflict_classes:
+  C0: generated_or_formatting
+  C1: dependency_or_lockfile
+  C2: configuration
+  C3: api_schema_migration
+  C4: security_auth_identity
+  C5: business_logic_or_ip
+
+entries:
+  - repository: yemanlin1st/crewAI
+    upstream: crewAIInc/crewAI
+    state: U1
+    remediation: qualify_then_fast_forward_or_migrate
+    local_delta_policy: preserve_if_detected_before_promotion
+    priority: P1
+  - repository: yemanlin1st/deer-flow
+    upstream: bytedance/deer-flow
+    state: U1
+    remediation: migration_scale_qualification
+    local_delta_policy: preserve_if_detected_before_promotion
+    priority: P1
+  - repository: yemanlin1st/n8n
+    upstream: n8n-io/n8n
+    state: U1
+    remediation: major_migration_scale_qualification
+    local_delta_policy: preserve_workflows_credentials_schema_and_runtime_compatibility
+    priority: P1
+  - repository: yemanlin1st/GenAI_Agents
+    upstream: NirDiamant/GenAI_Agents
+    state: unknown_recheck_required
+    remediation: separate_sovereign_pefy_control_plane_from_reference_fork
+    local_delta_policy: preserve_governance_skills_and_pefy_specific_controls
+    priority: P1
+
+entry_schema:
+  required:
+    - repository
+    - upstream
+    - state
+    - remediation
+    - local_delta_policy
+    - priority
+  optional:
+    - local_head
+    - upstream_head
+    - ahead_by
+    - behind_by
+    - license_local
+    - license_upstream
+    - runtime_delta
+    - schema_delta
+    - security_delta
+    - performance_delta
+    - conflict_classes
+    - qualification_branch
+    - rollback_ref
+    - evidence
+    - owner
+    - next_review
