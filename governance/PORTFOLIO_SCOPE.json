@@ -1,0 +1,24 @@
+{
+  "version": "1.0",
+  "owners": [
+    {"name": "yemanlin1st", "type": "user"},
+    {"name": "PEFY-TECH", "type": "org"}
+  ],
+  "inventory": {
+    "include_archived": true,
+    "include_forks": true,
+    "include_private_when_authorized": true,
+    "dormant_days": 365,
+    "large_repository_kb": 500000
+  },
+  "classification": {
+    "discovery_markers": ["awesome", "guide", "tips", "course", "learn", "examples", "template", "marketplace", "system-prompts", "cheatsheet", "handbook"],
+    "coding_runtime_markers": ["codex", "claude-code", "opencode", "deepseek-harness"],
+    "multi_agent_markers": ["crewai", "deer-flow", "metagpt", "agent-framework", "multi-agent"],
+    "workflow_markers": ["n8n", "workflow"],
+    "gateway_markers": ["openclaw"],
+    "secure_sandbox_markers": ["nemoclaw", "openshell", "sandbox"],
+    "skills_markers": ["skill", "skills", "mcp"],
+    "security_markers": ["security", "cyber", "firewall", "garkael", "soc", "siem", "zero-trust", "zerotrust"]
+  }
+}
