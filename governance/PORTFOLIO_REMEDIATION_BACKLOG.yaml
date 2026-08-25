@@ -1,4 +1,4 @@
-version: 1.1
+version: 1.2
 name: PEFY Portfolio Remediation Backlog
 updated: 2026-08-25
 
@@ -18,12 +18,13 @@ items:
 
   - id: CI-001
     priority: P0
-    component: upstream_drift_audit_workflow
+    component: portfolio_and_upstream_audit_workflow
     state: CONFIGURED_NOT_RUNTIME_QUALIFIED
-    action: enable_or_restore_GitHub_Actions_execution_then_collect_compile_audit_and_artifact_evidence
+    action: enable_or_restore_GitHub_Actions_execution_then_collect_compile_inventory_audit_and_artifact_evidence
     evidence:
       - workflow_paths_corrected
-      - audit_script_implemented
+      - upstream_audit_script_implemented
+      - portfolio_auto_discovery_script_implemented
       - multiple_matching_push_commits_produced_zero_workflow_runs
     blockers:
       - no_GitHub_Actions_run_for_branch_commits
@@ -46,12 +47,18 @@ items:
     upstream: openclaw/openclaw
     state: U1
     drift: {ahead: 0, behind: 57141}
-    action: migration_with_license_runtime_schema_plugin_and_data_review
+    action: migration_with_runtime_schema_plugin_data_provenance_and_third_party_notice_review
     qualification_pr: 1
     rollback: rollback/2026-04-03
+    resolved_findings:
+      - github_NOASSERTION_was_false_positive_both_LICENSE_files_are_MIT
     blockers:
-      - local_vs_upstream_license_metadata_conflict
       - no_CI_evidence_yet
+      - extreme_migration_scale
+      - runtime_schema_plugin_and_data_migration_not_yet_qualified
+    required_provenance:
+      - preserve_current_upstream_MIT_text
+      - preserve_required_THIRD_PARTY_NOTICES
 
   - id: NEMO-001
     priority: P0
@@ -123,7 +130,7 @@ items:
     rollback: rollback/2026-03-28
     blockers:
       - no_CI_evidence_yet
-      - repository_license_metadata_unknown
+      - effective_license_or_distribution_terms_require_review
 
   - id: DSH-001
     priority: P1
@@ -170,4 +177,5 @@ portfolio_rules:
   - preserve_rollback_for_every_U1_U3_migration
   - remediate_multi_hop_forks_at_the_authoritative_layer_first
   - discovery_catalogs_are_never_automatic_runtime_dependencies
+  - license_metadata_NOASSERTION_must_be_verified_against_real_license_files_before_blocking
   - close_or_downgrade_items_only_with_evidence
