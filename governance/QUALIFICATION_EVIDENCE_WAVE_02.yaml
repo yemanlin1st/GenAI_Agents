@@ -1,4 +1,4 @@
-version: 1.3
+version: 1.4
 updated: 2026-08-25
 scope: convergence_wave_02
 status: EVIDENCE_PARTIAL_NOT_PRODUCTION_QUALIFIED
@@ -47,19 +47,19 @@ components:
         state: CLOSED_SUPERSEDED
         base: 1e23347c0d74368f040fefd6eab1f4f45dbdc2b3
         head: 70e708c734cf64f0b25f19c9c380e5d82ae7ebc3
-        gate: true
         root_cause: >-
-          Current upstream workflows intentionally load trusted reusable CI actions from
-          github.event.pull_request.base.sha. Historical PEFY main did not contain the
-          current actions, so jobs failed before substantive upstream code tests.
+          Current upstream workflows load trusted reusable CI actions from
+          github.event.pull_request.base.sha. Historical PEFY main did not contain
+          the current actions, so jobs failed before substantive upstream tests.
         conclusion: invalid_as_runtime_compatibility_result_but_valid_as_CI_base_mismatch_evidence
       exact_upstream_full_ci_harness_pr_3:
-        state: RUNNING
+        state: RUNNING_ONLY_SHARD_9_REMAINED_AT_LAST_CAPTURE
         immutable_base_branch: qualification/upstream-base-2026-08-25
         base_sha: fa4eea8cfc89096fe562c3624cb7ec38496ecfda
         head_branch: qualification/full-ci-2026-08-25
         head_sha: 70e708c734cf64f0b25f19c9c380e5d82ae7ebc3
         delta: one_qualification_only_text_file
+        merge_policy: NEVER_MERGE
         confirmed_results:
           changed_path_detection: success
           PR_title_lint: success
@@ -70,7 +70,6 @@ components:
             threshold: high
             reviewed_graph_high_or_above_findings: 0
             exceptions: 0
-            note: raw_development_install_findings_do_not_equal_reviewed_production_graph_findings
           build_typecheck: success
           installer_integration:
             conclusion: success
@@ -91,36 +90,58 @@ components:
             product_failure: false
           static_checks:
             job_conclusion: failure
-            security_and_integrity_checks_before_failure:
-              createRequire_allowlist_ratchet: success
-              hadolint_binary_checksum: success
-              sandbox_lockfile_validation: success
-              reviewed_MCP_runtime_bundle: success
-              config_schema_validation: success_55_of_55
-              scorecard_typecheck: success
-              SPDX_headers: success
-              oxlint_type_aware: success
-              managed_inference_catalog: success
-              repository_checks: success
-              env_var_documentation_gate: success
-              shellcheck: success
-              hadolint: success
-              gitleaks_secret_scan: success
-              markdownlint: success
-              e2e_semantic_phase_plans: success
+            passed_controls:
+              - createRequire_allowlist_ratchet
+              - hadolint_binary_checksum
+              - sandbox_lockfile_validation
+              - reviewed_MCP_runtime_bundle
+              - config_schema_validation_55_of_55
+              - scorecard_typecheck
+              - SPDX_headers
+              - oxlint_type_aware
+              - managed_inference_catalog
+              - repository_checks
+              - env_var_documentation_gate
+              - shellcheck
+              - hadolint
+              - gitleaks_secret_scan
+              - markdownlint
+              - e2e_semantic_phase_plans
             failing_control: codebase_growth_guardrails
             failure_class: qualification_harness_comparison_base_artifact
             root_cause: >-
-              The growth-guardrail loader defaults to origin/main unless NEMOCLAW_GROWTH_PR=1.
-              In the PEFY fork origin/main is the historical March baseline, so the guardrail
-              interprets the entire NVIDIA migration as current PR growth even though PR #3
-              differs from its immutable upstream base by only one qualification text file.
+              Growth guardrail defaults to origin/main unless NEMOCLAW_GROWTH_PR=1.
+              In the PEFY fork origin/main is the historical March baseline, so it
+              treats the complete NVIDIA migration as the qualification PR delta.
             product_failure: false
           security_code_scanning:
             shellcheck_SARIF: success
             codeql_python: success
-            codeql_javascript_typescript: running
-          cli_coverage_shards: running
+            codeql_javascript_typescript: success
+          cli_coverage_shards:
+            passed: [1, 2, 4, 5, 6, 7, 8, 11]
+            running_at_last_capture: [9]
+            failed:
+              shard_3:
+                classification: UNRESOLVED_TIMEOUT
+                finding: one_5000ms_timeout_in_setup_nim_flow_serving_profile_test
+                test_character: mock_driven_no_direct_live_service_dependency
+                required_action: rerun_individual_job_after_parent_run_completes
+              shard_10:
+                classification: FORK_PROVENANCE_PORTABILITY_BLOCKER
+                findings:
+                  - canonical_test_fixture_binds_candidateRepository_to_NVIDIA_NemoClaw
+                  - production_validator_strictly_binds_repository_SHA_workflow_run_and_payload_identity
+                  - growth_guardrail_also_contaminated_by_historical_origin_main
+                product_failure: false
+                remediation: implement_two_level_canonical_plus_PEFY_provenance_without_weakening_identity_checks
+              shard_12:
+                classification: CANONICAL_HISTORY_PORTABILITY_BLOCKER
+                missing_PEFY_refs: [v0.0.36, v0.0.55, v0.0.74, v0.0.89]
+                canonical_NVIDIA_refs_verified_present: [v0.0.36, v0.0.55, v0.0.74, v0.0.89]
+                failure: historical_upgrade_fixture_git_rev_parse_status_128
+                product_failure: false
+                remediation: reference_verified_canonical_NVIDIA_history_or_verified_read_only_mirror_do_not_blindly_retag
       raw_npm_install_signal:
         root_development_graph:
           vulnerabilities_total: 9
@@ -130,14 +151,17 @@ components:
         secondary_development_graph:
           high: 2
         disposition: not_a_reviewed_production_graph_blocker_because_dedicated_reviewed_npm_audit_passed
-    conclusion: exact_upstream_baseline_has_substantial_positive_CI_evidence_but_is_not_production_qualified
+    portability_contract: governance/NEMOCLAW_FORK_PORTABILITY_CONTRACT.md
+    conclusion: exact_upstream_baseline_has_strong_positive_source_CI_evidence_but_fork_portability_and_target_runtime_gates_remain
     blockers:
       - explicit_DCO_attestation
-      - CLI_coverage_shards_pending
-      - CodeQL_javascript_typescript_pending
+      - shard_3_rerun_pending
+      - shard_9_terminal_result_pending
+      - fork_provenance_portability_not_implemented
+      - canonical_history_portability_not_implemented
       - GitHub_Code_Quality_feature_not_enabled_for_coverage_upload
-      - growth_guardrail_requires_PR_aware_or_immutable_base_comparison_context_for_fork_qualification
       - target_host_runtime_OpenShell_policy_performance_and_recovery_tests_not_yet_qualified
+      - OpenClaw_dependency_migration_not_yet_qualified
 
   - component: yemanlin1st/opencode
     qualification_pr: 1
@@ -172,6 +196,13 @@ qualification_patterns:
       - collect_evidence
       - never_merge_trigger_PR
     benefit: distinguishes_upstream_runtime_failure_from_historical_fork_CI_incompatibility
+  fork_provenance:
+    invariant: canonical_vendor_identity_and_PEFY_fork_identity_are_recorded_separately
+    forbidden:
+      - wildcard_repository_acceptance
+      - disabling_SHA_or_digest_checks
+      - retagging_PEFY_commits_with_vendor_tag_names
+      - suppressing_historical_upgrade_tests_due_to_missing_fork_history
 
 rules:
   - workflow_success_with_substantive_jobs_skipped_is_not_qualification_success
