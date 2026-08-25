@@ -1,0 +1,106 @@
+version: 1.0
+name: PEFY Upstream Source-Type Policy
+purpose: >-
+  Apply different update, legal, security and promotion rules according to the real
+  source/distribution model. A repository being publicly readable does not by itself
+  make it permissively open source or appropriate for redistribution.
+
+types:
+  OSS_PERMISSIVE:
+    examples: [MIT, Apache-2.0, BSD]
+    default_policy:
+      - preserve_license_notices_and_third_party_attribution
+      - fork_or_patch_only_when_adapter_is_insufficient
+      - qualify_security_compatibility_performance_and_rollback_before_promotion
+
+  OSS_COPYLEFT:
+    examples: [GPL-2.0, GPL-3.0, AGPL-3.0, LGPL]
+    default_policy:
+      - legal_ip_review_for_distribution_linking_and_network_service_implications
+      - isolate_proprietary_components_where_required
+      - preserve_source_and_notice_obligations
+      - do_not_assume_internal_and_external_distribution_have_same_obligations
+
+  FAIR_CODE_RESTRICTED:
+    description: source_available_but_with_material_use_distribution_or_commercial_restrictions
+    default_policy:
+      - treat_license_as_product_architecture_constraint
+      - internal_use_may_be_allowed_only_within_actual_terms
+      - client_facing_saas_resale_hosting_or_redistribution_requires_explicit_legal_review
+      - enterprise_only_files_features_or_directories_require_entitlement_check
+      - never_relabel_as_standard_open_source
+
+  VENDOR_DISTRIBUTION:
+    description: vendor_tool_or_public_source_tree_governed_by_vendor_terms_without_clear_permissive_repo_license
+    default_policy:
+      - prefer_official_supported_distribution_channel
+      - do_not_treat_public_repo_as_redistributable_source_without_rights_review
+      - keep_pefy_integrations_in_external_adapters_hooks_or_configuration
+      - monitor_vendor_terms_privacy_data_usage_and_supported_versions
+
+  EXPERIMENTAL_PREVIEW:
+    description: upstream_explicitly_marks_runtime_or_api_as_preview_developer_preview_alpha_or_unstable
+    default_policy:
+      - pin_exact_tested_version_or_commit
+      - sandbox_only_until_qualified
+      - thin_adapters_and_rollback_required
+      - monitor_breaking_changes_and_plugin_api_changes
+      - no_production_ready_claim_without_target_environment_evidence
+
+  DISCOVERY_REFERENCE:
+    description: awesome_lists_guides_examples_courses_templates_marketplaces_and_curated_references
+    default_policy:
+      - no_runtime_authority
+      - no_auto_install
+      - inspect_provenance_license_and_security_of_each_imported_capability
+      - import_minimum_needed_capability_not_entire_catalog_by_default
+
+  PEFY_OWNED:
+    description: proprietary_or_original_PEFY_code_policy_governance_or_products
+    default_policy:
+      - private_by_default_when_content_is_internal_confidential_or_proprietary
+      - enforce_pefy_change_security_ip_and_release_governance
+      - upstream_dependencies_remain_separately_attributed
+
+current_classifications:
+  yemanlin1st/codex:
+    upstream: openai/codex
+    type: OSS_PERMISSIVE
+    evidence: Apache-2.0
+  yemanlin1st/openclaw:
+    upstream: openclaw/openclaw
+    type: OSS_PERMISSIVE
+    evidence: MIT_LICENSE_file_verified
+  yemanlin1st/opencode:
+    upstream: anomalyco/opencode
+    type: OSS_PERMISSIVE
+    evidence: MIT
+  yemanlin1st/MetaGPT-x:
+    upstream: FoundationAgents/MetaGPT
+    type: OSS_PERMISSIVE
+    evidence: MIT
+  PEFY-TECH/NemoClaw:
+    upstream: NVIDIA/NemoClaw
+    type: OSS_PERMISSIVE
+    evidence: Apache-2.0
+  yemanlin1st/DeepFlow:
+    upstream: DeepFlowcc/DeepFlow
+    type: OSS_COPYLEFT
+    evidence: GPL-3.0
+  yemanlin1st/n8n:
+    upstream: n8n-io/n8n
+    type: FAIR_CODE_RESTRICTED
+    evidence: Sustainable_Use_License_with_Enterprise_restrictions_for_dot_ee_code
+  yemanlin1st/claude-code:
+    upstream: anthropics/claude-code
+    type: VENDOR_DISTRIBUTION
+    evidence: no_standard_repo_LICENSE_and_README_points_to_vendor_commercial_terms
+  deepseek-ai/deepseek-harness:
+    type: [OSS_PERMISSIVE, EXPERIMENTAL_PREVIEW]
+    evidence: MIT_and_Developer_Preview
+
+resolution_rules:
+  - when_metadata_and_license_file_disagree_verify_the_actual_license_text_and_notices
+  - when_redistribution_rights_are_unclear_stop_distribution_or_fork_promotion_until_reviewed
+  - legal_classification_does_not_replace_security_or_runtime_qualification
+  - source_type_may_change_over_time_and_is_part_of_release_watch
