@@ -1,0 +1,86 @@
+version: 1.0
+updated: 2026-08-25
+scope: convergence_wave_02
+status: EVIDENCE_PARTIAL_NOT_PRODUCTION_QUALIFIED
+
+components:
+  - component: yemanlin1st/openclaw
+    qualification_pr: 1
+    head: b9d522738d5e087c1783e38eb1401eebcabc40de
+    classic_status_contexts: 0
+    pull_request_workflow_runs_observed: 0
+    conclusion: no_CI_evidence_on_PEFY_qualification_surface
+    blockers:
+      - state_and_agent_schema_migration_not_tested
+      - runtime_plugin_provider_memory_and_session_migration_not_tested
+      - no_security_or_performance_evidence
+
+  - component: PEFY-TECH/NemoClaw
+    qualification_pr: 1
+    head: fa4eea8cfc89096fe562c3624cb7ec38496ecfda
+    workflow_evidence:
+      pr_title_lint:
+        initial: failure
+        remediation: title_changed_to_conventional_commit_format
+        rerun: success
+      dco_declaration:
+        status: failure
+        reason: PR_body_requires_explicit_Signed-off-by_declaration
+        treatment: requires_authorized_human_attestation_do_not_fabricate
+      ci_aggregate:
+        conclusion: success
+        evidence_quality: insufficient
+        reason: CI_REQUIRED_false_metadata_only_gate
+        substantive_jobs:
+          changes: skipped
+          static_checks: skipped
+          build_typecheck: skipped
+          installer_integration: skipped
+          reviewed_npm_audit: skipped
+          cli_tests: skipped
+          plugin_tests: skipped
+          wechat_runtime_audit: skipped
+      installer_hash:
+        status: skipped
+      npm_install_signal:
+        observed_in: PR_title_lint_job_dependency_install
+        vulnerabilities_total: 9
+        low: 1
+        moderate: 2
+        high: 6
+        disposition: unresolved_signal_requires_reviewed_npm_audit_and_dependency_triage
+    conclusion: governance_title_fixed_but_runtime_security_qualification_not_run
+    blockers:
+      - explicit_DCO_attestation
+      - substantive_CI_not_executed
+      - npm_vulnerability_signal_untriaged
+      - target_host_runtime_and_OpenShell_policy_tests_not_executed
+
+  - component: yemanlin1st/opencode
+    qualification_pr: 1
+    head: 69aaa22793bcbe0b016ad9cfad22616906766df0
+    classic_status_contexts: 0
+    pull_request_workflow_runs_observed: 0
+    conclusion: no_CI_evidence_on_PEFY_qualification_surface
+    blockers:
+      - AI_SDK_5_to_6_migration_not_tested
+      - patched_MCP_and_provider_dependencies_not_qualified
+      - Bun_1_3_14_reproducibility_not_tested
+
+  - component: yemanlin1st/MetaGPT-x
+    qualification_pr: 1
+    head: 11cdf466d042aece04fc6cfd13b28e1a70341b1f
+    classic_status_contexts: 0
+    pull_request_workflow_runs_observed: 0
+    conclusion: no_CI_evidence_on_PEFY_qualification_surface
+    blockers:
+      - package_0_8_1_to_1_0_0_behavior_not_tested
+      - protobuf_3_to_4_compatibility_not_tested
+      - OCR_capability_retention_decision_not_executed
+
+rules:
+  - workflow_success_with_substantive_jobs_skipped_is_not_qualification_success
+  - metadata_only_CI_must_not_satisfy_runtime_security_or_performance_gates
+  - unresolved_dependency_vulnerability_signals_block_security_qualification
+  - DCO_or_other_legal_attestations_require_authorized_human_action
+  - no_component_is_promoted_without_reproducible_runtime_evidence
