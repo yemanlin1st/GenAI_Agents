@@ -1,4 +1,4 @@
-version: 1.0
+version: 1.1
 name: PEFY-Upstream-Watchlist
 auto_discovery:
   enabled: true
@@ -18,6 +18,40 @@ critical_upstreams:
       sandbox_validation: true
       rollback_required: true
       trajectory_privacy_review: true
+
+  - component: TrueForge
+    upstream: truefoundry/trueforge
+    local_integration: yemanlin1st/GenAI_Agents:skills/trueforge
+    package_baseline:
+      "@truefoundry/trueforge": "0.1.4"
+      "@truefoundry/trueforge-sdk": "0.1.4"
+      "@truefoundry/trueforge-ui": "0.2.4"
+    tracking_mode: repository_releases_packages_commits_security_runtime_requirements
+    license: MIT
+    treatment: governed_subordinate_harness
+    policy:
+      pin_versions: true
+      localhost_only_for_local_mode: true
+      hosted_auth_required_for_shared_use: true
+      sandbox_validation: true
+      rollback_required: true
+      mcp_and_skill_provenance_review: true
+      secrets_externalized: true
+
+  - component: Three.js
+    upstream: mrdoob/three.js
+    local_integration: yemanlin1st/GenAI_Agents:skills/threejs
+    package: three
+    package_baseline: "0.185.1"
+    tracking_mode: releases_packages_commits_security_browser_compatibility
+    license: MIT
+    treatment: optional_spatial_visualization_engine
+    policy:
+      pin_versions: true
+      lazy_load_by_default: true
+      accessibility_fallback_required: true
+      mobile_performance_gate: true
+      asset_supply_chain_review: true
 
   - component: CrewAI
     local_repository: yemanlin1st/crewAI
@@ -50,10 +84,26 @@ critical_upstreams:
     treatment: migration_scale_sync
     special_checks: [license, runtime_requirements, database_migrations, workflow_compatibility, credentials, community_nodes]
 
+reference_sources:
+  - component: Claude Fable 5 structure benchmark
+    authoritative_product_source: anthropic.com
+    structural_capture_sources:
+      - asgeirtj/system_prompts_leaks:Anthropic/Official/2026-06-09-claude-fable-5.md
+      - A3S-Lab/claude-fable-5:claude-fable-5.md
+    local_integration: yemanlin1st/GenAI_Agents:skills/fable5-structure
+    treatment: architecture_reference_only
+    policy:
+      do_not_impersonate_runtime: true
+      do_not_copy_provider_identity_claims: true
+      do_not_use_permission_bypass_flags: true
+      preserve_platform_safety: true
+      verify_current_product_facts: true
+
 monitor_signals:
   - releases
   - tags
   - default_branch_commits
+  - package_registry_versions
   - security_advisories
   - cves
   - breaking_changes
