@@ -1,0 +1,38 @@
+{
+  "version": "1.0",
+  "supervisor": "METAPEFYON_OMEGA",
+  "capabilities": {
+    "direct_reasoning": {
+      "kind": "native",
+      "risk_ceiling": "medium",
+      "network": false,
+      "cost_weight": 1,
+      "latency_weight": 1,
+      "preferred_for": ["simple_knowledge", "classification", "summarization", "planning"]
+    },
+    "trueforge": {
+      "kind": "subordinate_harness",
+      "package": "@truefoundry/trueforge-sdk@0.1.3",
+      "risk_ceiling": "high",
+      "network": true,
+      "requires_approval_for": ["shared_deployment", "production_write", "credential_use"],
+      "preferred_for": ["long_running_agent", "session_persistence", "mcp_tools", "sandbox", "subagents", "streaming"]
+    },
+    "deepseek_harness": {
+      "kind": "subordinate_harness",
+      "risk_ceiling": "high",
+      "network": true,
+      "requires_approval_for": ["production_write", "privileged_execution"],
+      "preferred_for": ["agentic_coding", "sandbox", "trajectory_analysis", "subagents"]
+    },
+    "threejs": {
+      "kind": "optional_spatial_ui",
+      "package": "three@0.185.1",
+      "risk_ceiling": "medium",
+      "network": false,
+      "lazy_load": true,
+      "fallback_required": true,
+      "preferred_for": ["3d", "digital_twin", "topology", "spatial_graph", "simulation"]
+    }
+  }
+}

@@ -1,9 +1,10 @@
 {
   "name": "@pefy/omega-extension-runtime",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "private": true,
   "type": "module",
-  "description": "Governed PEFY Omega integration baseline for TrueForge and Three.js.",
+  "description": "Governed PEFY Omega capability routing runtime for TrueForge, Three.js and modular instruction architecture.",
+  "exports": "./src/index.mjs",
   "engines": {
     "node": ">=22.13.0"
   },
@@ -14,7 +15,10 @@
     "three": "0.185.1"
   },
   "scripts": {
+    "test": "node --test test/*.test.mjs",
     "verify:deps": "npm ls --depth=0 @truefoundry/trueforge @truefoundry/trueforge-sdk @truefoundry/trueforge-ui three",
-    "verify:three": "node -e \"import('three').then(m=>{if(!m.REVISION)process.exit(1);console.log('three revision',m.REVISION)})\""
+    "verify:trueforge": "node -e \"import('@truefoundry/trueforge-sdk').then(m=>{if(!m.TrueForge)process.exit(1);console.log('trueforge sdk export ok')})\"",
+    "verify:three": "node -e \"import('three').then(m=>{if(!m.REVISION)process.exit(1);console.log('three revision',m.REVISION)})\"",
+    "verify:runtime": "node --check src/policy.mjs && node --check src/router.mjs && node --check src/prompt-assembler.mjs && node --check src/trueforge-adapter.mjs && node --check src/threejs-adapter.mjs && node --check src/index.mjs && npm test"
   }
 }

@@ -1,6 +1,7 @@
-version: 2.0
+version: 2.1
 profile: PEFY-OMEGA-STRUCTURE
-status: candidate
+status: active_governed_runtime
+qualification_state: ci_validated_target_environment_unqualified
 supervisory_control_plane: METAPEFYON_OMEGA
 base_governance:
   - governance/PEFY_AI_MASTER_CONTINUOUS_IMPROVEMENT_PROMPT.md
@@ -36,6 +37,7 @@ capabilities:
     role: subordinate_agent_harness
     precedence: below_metapefyon
     package: "@truefoundry/trueforge@0.1.4"
+    sdk: "@truefoundry/trueforge-sdk@0.1.3"
   threejs_spatial_visualization:
     path: skills/threejs/SKILL.md
     role: optional_spatial_ui
@@ -44,9 +46,25 @@ capabilities:
     critical_workflow_fallback_required: true
 
 runtime_baseline:
+  version: "0.2.0"
   package_manifest: integrations/pefy-extension-runtime/package.json
+  capability_registry: integrations/pefy-extension-runtime/config/capabilities.json
+  executable_entrypoint: integrations/pefy-extension-runtime/src/index.mjs
+  test_suite: integrations/pefy-extension-runtime/test/runtime.test.mjs
   provisioner: scripts/provision_pefy_extension_runtime.sh
   node_minimum: "22.13.0"
+  ci_workflow: .github/workflows/omega-structure-validation.yml
+
+validated_capabilities:
+  - deterministic_task_risk_classification
+  - approval_requirement_derivation
+  - policy_driven_capability_routing
+  - dynamic_instruction_module_selection
+  - execution_envelope_assembly
+  - trueforge_sdk_import
+  - trueforge_loopback_default
+  - threejs_lazy_import
+  - threejs_low_resource_fallback
 
 promotion_gates:
   - provenance_verified
@@ -68,3 +86,4 @@ activation_policy:
   no_uncontrolled_mass_installation: true
   no_runtime_impersonation: true
   no_default_permission_bypass: true
+  production_qualification_requires_target_environment_evidence: true
