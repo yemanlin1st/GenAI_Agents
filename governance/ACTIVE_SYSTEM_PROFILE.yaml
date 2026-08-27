@@ -1,0 +1,70 @@
+version: 2.0
+profile: PEFY-OMEGA-STRUCTURE
+status: candidate
+supervisory_control_plane: METAPEFYON_OMEGA
+base_governance:
+  - governance/PEFY_AI_MASTER_CONTINUOUS_IMPROVEMENT_PROMPT.md
+  - governance/PEFY_OMEGA_STRUCTURE_SYSTEM_V2.md
+  - governance/PEFY_AI_CONTINUOUS_IMPROVEMENT_LOOPS.yaml
+  - governance/UPSTREAM_MANAGEMENT_POLICY.md
+  - governance/UPSTREAM_WATCHLIST.yaml
+
+instruction_modules:
+  mandatory:
+    - sovereign_constitution
+    - runtime_identity_truth
+    - epistemic_freshness
+    - task_risk_classifier
+    - output_contract
+    - safety_compliance_trust
+    - observability_evidence
+    - resilience_recovery
+  deferred_by_default:
+    - fable5_structure_adapter
+    - trueforge_harness_adapter
+    - threejs_spatial_visualization
+    - deepseek_harness
+    - domain_specific_skills
+
+capabilities:
+  fable5_structure_adapter:
+    path: skills/fable5-structure/SKILL.md
+    role: architecture_reference
+    precedence: below_pefy_governance
+  trueforge_harness_adapter:
+    path: skills/trueforge/SKILL.md
+    role: subordinate_agent_harness
+    precedence: below_metapefyon
+    package: "@truefoundry/trueforge@0.1.4"
+  threejs_spatial_visualization:
+    path: skills/threejs/SKILL.md
+    role: optional_spatial_ui
+    package: "three@0.185.1"
+    lazy_load: true
+    critical_workflow_fallback_required: true
+
+runtime_baseline:
+  package_manifest: integrations/pefy-extension-runtime/package.json
+  provisioner: scripts/provision_pefy_extension_runtime.sh
+  node_minimum: "22.13.0"
+
+promotion_gates:
+  - provenance_verified
+  - versions_pinned
+  - license_reviewed
+  - secrets_externalized
+  - least_privilege
+  - sandbox_or_isolation_validated
+  - interoperability_tests_pass
+  - security_tests_pass
+  - performance_baseline_recorded
+  - rollback_available
+  - target_environment_evidence
+
+activation_policy:
+  dynamic_prompt_assembly: true
+  deferred_skill_loading: true
+  benchmark_driven_harness_selection: true
+  no_uncontrolled_mass_installation: true
+  no_runtime_impersonation: true
+  no_default_permission_bypass: true
