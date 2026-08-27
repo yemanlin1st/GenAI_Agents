@@ -1,0 +1,66 @@
+name: PEFY Omega Structure Validation
+
+on:
+  workflow_dispatch:
+  pull_request:
+    paths:
+      - "governance/ACTIVE_SYSTEM_PROFILE.yaml"
+      - "governance/PEFY_OMEGA_STRUCTURE_SYSTEM_V2.md"
+      - "governance/UPSTREAM_WATCHLIST.yaml"
+      - "skills/fable5-structure/**"
+      - "skills/trueforge/**"
+      - "skills/threejs/**"
+      - "integrations/pefy-extension-runtime/**"
+      - "scripts/provision_pefy_extension_runtime.sh"
+      - ".github/workflows/omega-structure-validation.yml"
+  push:
+    branches: [main]
+    paths:
+      - "governance/ACTIVE_SYSTEM_PROFILE.yaml"
+      - "governance/PEFY_OMEGA_STRUCTURE_SYSTEM_V2.md"
+      - "governance/UPSTREAM_WATCHLIST.yaml"
+      - "skills/fable5-structure/**"
+      - "skills/trueforge/**"
+      - "skills/threejs/**"
+      - "integrations/pefy-extension-runtime/**"
+      - "scripts/provision_pefy_extension_runtime.sh"
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Node 22
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22.13.0"
+          cache: npm
+          cache-dependency-path: integrations/pefy-extension-runtime/package.json
+
+      - name: Validate YAML syntax
+        run: |
+          ruby -e "require 'yaml'; YAML.load_file('governance/ACTIVE_SYSTEM_PROFILE.yaml'); YAML.load_file('governance/UPSTREAM_WATCHLIST.yaml'); puts 'YAML OK'"
+
+      - name: Validate package manifest
+        run: python -m json.tool integrations/pefy-extension-runtime/package.json >/dev/null
+
+      - name: Validate provisioning script syntax
+        run: bash -n scripts/provision_pefy_extension_runtime.sh
+
+      - name: Resolve pinned runtime packages without lifecycle scripts
+        working-directory: integrations/pefy-extension-runtime
+        run: npm install --ignore-scripts --no-fund --no-audit
+
+      - name: Verify pinned top-level dependencies
+        working-directory: integrations/pefy-extension-runtime
+        run: npm run verify:deps
+
+      - name: Smoke-test Three.js import
+        working-directory: integrations/pefy-extension-runtime
+        run: npm run verify:three
