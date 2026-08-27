@@ -24,7 +24,7 @@ critical_upstreams:
     local_integration: yemanlin1st/GenAI_Agents:skills/trueforge
     package_baseline:
       "@truefoundry/trueforge": "0.1.4"
-      "@truefoundry/trueforge-sdk": "0.1.4"
+      "@truefoundry/trueforge-sdk": "0.1.3"
       "@truefoundry/trueforge-ui": "0.2.4"
     tracking_mode: repository_releases_packages_commits_security_runtime_requirements
     license: MIT
