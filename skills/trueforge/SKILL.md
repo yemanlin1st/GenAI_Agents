@@ -9,7 +9,7 @@ TrueForge provides an agent execution loop with multi-provider model connectivit
 ## Version policy
 Initial validated integration target:
 - `@truefoundry/trueforge`: `0.1.4`
-- `@truefoundry/trueforge-sdk`: `0.1.4`
+- `@truefoundry/trueforge-sdk`: `0.1.3`
 - `@truefoundry/trueforge-ui`: `0.2.4`
 
 Re-verify versions before every upgrade. Major/minor changes are not auto-promoted.
