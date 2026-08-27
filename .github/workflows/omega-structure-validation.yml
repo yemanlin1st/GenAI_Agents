@@ -40,15 +40,12 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: "22.13.0"
-          cache: npm
-          cache-dependency-path: integrations/pefy-extension-runtime/package.json
 
-      - name: Validate YAML syntax
+      - name: Validate governance syntax
         run: |
           ruby -e "require 'yaml'; YAML.load_file('governance/ACTIVE_SYSTEM_PROFILE.yaml'); YAML.load_file('governance/UPSTREAM_WATCHLIST.yaml'); puts 'YAML OK'"
-
-      - name: Validate package manifest
-        run: python -m json.tool integrations/pefy-extension-runtime/package.json >/dev/null
+          python -m json.tool integrations/pefy-extension-runtime/config/capabilities.json >/dev/null
+          python -m json.tool integrations/pefy-extension-runtime/package.json >/dev/null
 
       - name: Validate provisioning script syntax
         run: bash -n scripts/provision_pefy_extension_runtime.sh
@@ -57,10 +54,18 @@ jobs:
         working-directory: integrations/pefy-extension-runtime
         run: npm install --ignore-scripts --no-fund --no-audit
 
-      - name: Verify pinned top-level dependencies
+      - name: Verify pinned dependencies
         working-directory: integrations/pefy-extension-runtime
         run: npm run verify:deps
 
-      - name: Smoke-test Three.js import
+      - name: Verify TrueForge SDK import
+        working-directory: integrations/pefy-extension-runtime
+        run: npm run verify:trueforge
+
+      - name: Verify Three.js import
         working-directory: integrations/pefy-extension-runtime
         run: npm run verify:three
+
+      - name: Validate executable Omega runtime
+        working-directory: integrations/pefy-extension-runtime
+        run: npm run verify:runtime
